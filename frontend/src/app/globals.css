@@ -1,0 +1,268 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme {
+  /* Наши кастомные цвета терминала */
+  --color-terminal-green: #4af626;
+  --color-terminal-dark-green: #1b4d14;
+  --color-terminal-bg: #050505;
+  --color-terminal-border: #1a1a1a;
+
+  /* Шрифт */
+  --font-mono: "JetBrains Mono", "Fira Code", monospace;
+}
+
+:root {
+  background-color: var(--color-terminal-bg);
+  color: var(--color-terminal-green);
+}
+
+body {
+  font-family: var(--font-mono);
+}
+
+/* Тот самый эффект старого монитора */
+.crt-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background:
+    linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%),
+    linear-gradient(
+      90deg,
+      rgba(255, 0, 0, 0.03),
+      rgba(0, 255, 0, 0.01),
+      rgba(0, 0, 255, 0.03)
+    );
+  background-size:
+    100% 3px,
+    3px 100%;
+  pointer-events: none;
+  z-index: 999;
+  opacity: 0.8;
+}
+
+/* Настройка для Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-terminal-dark-green) var(--color-terminal-bg);
+}
+
+/* Настройка для Chrome, Edge и Safari */
+::-webkit-scrollbar {
+  width: 8px; /* Ширина скроллбара */
+  height: 8px; /* Высота для горизонтального скролла */
+}
+
+/* Фон дорожки скроллбара */
+::-webkit-scrollbar-track {
+  background: var(--color-terminal-bg);
+  border-left: 1px solid rgba(74, 246, 38, 0.1); /* Тонкая линия разделения */
+}
+
+/* Сама "ручка" (ползунок) */
+::-webkit-scrollbar-thumb {
+  background: var(--color-terminal-dark-green);
+  border-radius: 0px; /* В терминале всё должно быть квадратным */
+  border: 1px solid var(--color-terminal-green); /* Окантовка для четкости */
+}
+
+/* Цвет ползунка при наведении */
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-terminal-green);
+  box-shadow: 0 0 10px var(--color-terminal-green); /* Легкое свечение */
+}
+
+/* --- ЭФФЕКТЫ ЭЛТ-МОНИТОРА (CRT EFFECTS) --- */
+
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 999; /* Поверх всего */
+  pointer-events: none; /* Не мешает кликам */
+  opacity: 0.12; /* Очень легкий эффект, чтобы не утомлять глаза */
+}
+
+/* 1. СКАНИРУЮЩИЕ ЛИНИИ (через ::before) */
+body::before {
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+  background-size: 100% 4px; /* Расстояние между линиями */
+}
+
+/* 2. ЭФФЕКТ ШУМА / СНЕГА (через ::after) */
+body::after {
+  background-image: url("/noise.png"); /* Путь к файлу в public */
+  background-repeat: repeat;
+  animation: noiseAnimation 0.2s infinite; /* Быстрая анимация */
+}
+
+/* АНИМАЦИЯ ШУМА (смещение текстуры) */
+@keyframes noiseAnimation {
+  0% {
+    background-position: 0 0;
+  }
+  10% {
+    background-position: -5% -10%;
+  }
+  20% {
+    background-position: -15% 5%;
+  }
+  30% {
+    background-position: 7% -25%;
+  }
+  40% {
+    background-position: 20% 25%;
+  }
+  50% {
+    background-position: -25% 10%;
+  }
+  60% {
+    background-position: 15% -5%;
+  }
+  70% {
+    background-position: 0% 15%;
+  }
+  80% {
+    background-position: 25% 35%;
+  }
+  90% {
+    background-position: -10% 10%;
+  }
+  100% {
+    background-position: 10% -10%;
+  }
+}
+
+/* --- Редкий Горизонтальный Глитч (Rare Horizontal Glitch) --- */
+
+.text-glitch {
+  position: relative;
+  display: inline-block;
+  color: var(--color-terminal-green);
+  /* Анимация длится 15 секунд и повторяется бесконечно */
+  animation: glitch-horizontal 15s infinite ease-in-out;
+}
+
+/* Снова используем дубликаты текста через ::before и ::after */
+.text-glitch::before,
+.text-glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--color-terminal-bg);
+  opacity: 0.9;
+  visibility: hidden; /* По умолчанию скрыты, появляются только при сбое */
+}
+
+/* СЛОЙ 1: Сине-зеленый сдвиг (через ::before) */
+.text-glitch::before {
+  text-shadow: 2px 0 #ff00c1; /* Сдвиг вправо */
+  animation: glitch-anim-horizontal-1 15s infinite linear;
+}
+
+/* СЛОЙ 2: Красно-розовый сдвиг (через ::after) */
+.text-glitch::after {
+  text-shadow: -2px 0 #00fff9; /* Сдвиг влево */
+  animation: glitch-anim-horizontal-2 15s infinite linear;
+}
+
+/* --- АНИМАЦИИ (KEYFRAMES) --- */
+
+/* 1. Основное мерцание (90% времени текст стабилен) */
+@keyframes glitch-horizontal {
+  0%,
+  90%,
+  100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  /* Быстрая серия сдвигов в конце цикла */
+  91% {
+    transform: translate(-2px, 0);
+    opacity: 0.9;
+  }
+  92% {
+    transform: translate(2px, 1px);
+    opacity: 1;
+  }
+  93% {
+    transform: translate(0, 0);
+    opacity: 0.95;
+  }
+  94% {
+    transform: translate(-1px, -1px);
+    opacity: 1;
+  }
+  95% {
+    transform: translate(0, 0);
+    opacity: 1;
+  }
+}
+
+/* 2. Анимация СЛОЯ 1 (Хаотичные горизонтальные разрезы) */
+@keyframes glitch-anim-horizontal-1 {
+  0%,
+  90%,
+  100% {
+    visibility: hidden;
+    clip-path: inset(0 0 0 0);
+  }
+  /* Активация сбоя */
+  91% {
+    visibility: visible;
+    clip-path: inset(0 60% 0 0);
+    transform: translate(4px, 0);
+  } /* Разрез слева */
+  93% {
+    visibility: visible;
+    clip-path: inset(0 0 0 70%);
+    transform: translate(-4px, 0);
+  } /* Разрез справа */
+  95% {
+    visibility: hidden;
+    clip-path: inset(0 30% 0 40%);
+    transform: translate(0, 0);
+  } /* Узкая полоса в центре */
+}
+
+/* 3. Анимация СЛОЯ 2 (Другой ритм горизонтальных разрезов) */
+@keyframes glitch-anim-horizontal-2 {
+  0%,
+  90%,
+  100% {
+    visibility: hidden;
+    clip-path: inset(0 0 0 0);
+  }
+  /* Активация сбоя */
+  91% {
+    visibility: visible;
+    clip-path: inset(0 0 0 60%);
+    transform: translate(-3px, 0);
+  }
+  92% {
+    visibility: visible;
+    clip-path: inset(0 80% 0 0);
+    transform: translate(3px, 0);
+  }
+  94% {
+    visibility: hidden;
+    clip-path: inset(0 10% 0 90%);
+    transform: translate(0, 0);
+  }
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
