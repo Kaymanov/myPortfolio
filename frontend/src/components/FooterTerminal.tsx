@@ -14,6 +14,13 @@ export const FooterTerminal = () => {
   const router = useRouter();
   const [input, setInput] = useState("");
   const [time, setTime] = useState<string>("");
+  const [isOpen, setIsOpen] = useState(true);
+
+  // Функция для сворачивания/разворачивания терминала
+  const toggleTerminal = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsOpen(!isOpen);
+  };
 
   useEffect(() => {
     // Устанавливаем время только после загрузки страницы в браузере (чтобы избежать ошибки Hydration)
@@ -192,18 +199,38 @@ export const FooterTerminal = () => {
   };
 
   return (
-    <footer
-      onClick={handleTerminalClick}
-      className="bg-black border-t border-terminal-green/30 h-48 md:h-56 p-4 font-mono text-xs md:text-sm overflow-hidden flex flex-col cursor-text fixed bottom-0 left-0 w-full z-40 shadow-[0_-5px_20px_rgba(0,0,0,0.8)]"
-    >
-      <div className="max-w-6xl mx-auto w-full flex flex-col h-full relative">
-        {/* Декоративная шапка терминала */}
-        <div className="text-terminal-green/40 flex justify-between border-b border-terminal-green/20 pb-2 mb-2 shrink-0">
-          <span>root@iamroot.pro:~# /bin/bash</span>
-          <span className="hidden md:inline">
-            SYSTEM UPTIME: [ {time || "CALCULATING..."} ]
-          </span>
-        </div>
+    <>
+      <footer
+        onClick={isOpen ? handleTerminalClick : undefined}
+        className={`bg-black/95 backdrop-blur-md border-t border-terminal-green/40 h-56 md:h-64 p-4 font-mono text-xs md:text-sm overflow-hidden flex flex-col cursor-text fixed bottom-0 left-0 w-full z-40 shadow-[0_-10px_30px_rgba(0,0,0,0.8)] transition-transform duration-500 ease-in-out ${
+          isOpen ? "translate-y-0" : "translate-y-full"
+        }`}
+      >
+        <div className="max-w-6xl mx-auto w-full flex flex-col h-full relative">
+          {/* Декоративная шапка терминала */}
+          <div className="text-terminal-green/50 flex justify-between items-center border-b border-terminal-green/30 pb-2 mb-3 shrink-0">
+            <div className="flex items-center gap-3">
+              <span className="hidden sm:flex space-x-1.5 opacity-80">
+                <span className="w-2.5 h-2.5 rounded-full bg-red-500"></span>
+                <span className="w-2.5 h-2.5 rounded-full bg-yellow-500"></span>
+                <span className="w-2.5 h-2.5 rounded-full bg-green-500"></span>
+              </span>
+              <span className="font-bold text-terminal-green">root@iamroot.pro:~# /bin/bash</span>
+            </div>
+            
+            <div className="flex items-center gap-4">
+              <span className="hidden md:inline text-terminal-green/40">
+                SYSTEM UPTIME: [ {time || "CALCULATING..."} ]
+              </span>
+              <button
+                onClick={toggleTerminal}
+                className="text-terminal-green/70 hover:text-terminal-green hover:bg-terminal-green/20 px-2 py-1 rounded transition-all flex items-center gap-1 group border border-transparent hover:border-terminal-green/30"
+                title="Скрыть терминал"
+              >
+                <span className="group-hover:animate-pulse font-bold">_</span> MINIMIZE
+              </button>
+            </div>
+          </div>
 
         {/* Область вывода (история) */}
         <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-hide flex flex-col gap-1 pb-2">
@@ -253,5 +280,17 @@ export const FooterTerminal = () => {
         <div className="absolute inset-0 bg-[linear-gradient(transparent_50%,rgba(74,246,38,0.05)_50%)] bg-[length:100%_4px] pointer-events-none" />
       </div>
     </footer>
+
+    {/* Кнопка открытия терминала, когда он скрыт */}
+    <button
+      onClick={() => setIsOpen(true)}
+      className={`fixed bottom-0 right-4 sm:right-12 bg-black/90 backdrop-blur-sm border-t border-l border-r border-terminal-green/50 text-terminal-green px-5 py-2 font-mono text-xs sm:text-sm z-50 rounded-t-lg hover:bg-terminal-green/10 transition-all duration-500 ease-in-out flex items-center gap-2 group shadow-[0_0_15px_rgba(74,246,38,0.15)] hover:shadow-[0_0_20px_rgba(74,246,38,0.3)] ${
+        isOpen ? "translate-y-full opacity-0 pointer-events-none" : "translate-y-0 opacity-100"
+      }`}
+    >
+      <span className="w-2 h-2 bg-terminal-green rounded-full group-hover:animate-ping absolute left-3"></span>
+      <span className="pl-3 tracking-wider font-bold">&gt;_ SYS_CONSOLE</span>
+    </button>
+    </>
   );
 };

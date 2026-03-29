@@ -1,6 +1,12 @@
+import { Metadata } from "next";
 import Link from "next/link";
 import { BlogPost } from "@/types";
 import { getBlogPosts } from "@/lib/api";
+
+export const metadata: Metadata = {
+  title: "Терминал Знаний | Блог",
+  description: "Экспертные статьи про разработку сайтов, системное администрирование корпоративной IT инфраструктуры и интеграцию ИИ агентов.",
+};
 
 export default async function BlogIndex() {
   // Запрашиваем все посты с бэкенда

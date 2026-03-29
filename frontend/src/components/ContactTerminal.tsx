@@ -1,22 +1,30 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export const ContactTerminal = () => {
   const [formData, setFormData] = useState({
     alias: "",
     email: "",
     payload: "",
+    website: "", // Honeypot
   });
+  const [startTime, setStartTime] = useState<number>(0);
   const [status, setStatus] = useState<"IDLE" | "TRANSMITTING" | "SUCCESS">(
     "IDLE",
   );
+
+  useEffect(() => {
+    // Инициализируем таймер при загрузке компонента
+    setStartTime(Date.now());
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.alias || !formData.email || !formData.payload) return;
 
     setStatus("TRANSMITTING");
+    const timeElapsed = Date.now() - startTime;
 
     try {
       const response = await fetch(
@@ -30,13 +38,15 @@ export const ContactTerminal = () => {
             sender_alias: formData.alias,
             return_node_ip: formData.email,
             encrypted_payload: formData.payload,
+            honeypot: formData.website,
+            time_elapsed: timeElapsed,
           }),
         },
       );
 
       if (response.ok) {
         setStatus("SUCCESS");
-        setFormData({ alias: "", email: "", payload: "" });
+        setFormData({ alias: "", email: "", payload: "", website: "" });
       } else {
         // Если сработал Throttle (лимит запросов) или ошибка валидации
         console.error("Transmission failed");
@@ -149,6 +159,16 @@ export const ContactTerminal = () => {
           </div>
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+            {/* HONEYPOT FIELD - скрытое поле, на которое ведутся спам-боты */}
+            <input
+              type="text"
+              name="company_website"
+              style={{ display: "none", position: "absolute", opacity: 0, width: 0, height: 0 }}
+              tabIndex={-1}
+              autoComplete="off"
+              value={formData.website}
+              onChange={(e) => setFormData({ ...formData, website: e.target.value })}
+            />
             {/* Поля в один столбик для аккуратности справа */}
             <div className="group">
               <label className="block text-terminal-green/70 text-[10px] uppercase tracking-widest mb-1 group-focus-within:text-terminal-green transition-colors">

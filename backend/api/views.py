@@ -15,20 +15,20 @@ class SkillGroupViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = SkillGroup.objects.all().order_by('order')
     serializer_class = SkillGroupSerializer
 
-class ProjectViewSet(viewsets.ModelViewSet):
+class ProjectViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Project.objects.all().order_by('-created_at')
     serializer_class = ProjectSerializer
 
 
-class ExperienceViewSet(viewsets.ModelViewSet):
+class ExperienceViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Experience.objects.all().order_by('-date_range')
     serializer_class = ExperienceSerializer
 
-class EducationViewSet(viewsets.ModelViewSet):
+class EducationViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Education.objects.all().order_by('-date_range')
     serializer_class = EducationSerializer
 
-class BlogPostViewSet(viewsets.ModelViewSet):
+class BlogPostViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = BlogPost.objects.all().order_by('-created_at')
     serializer_class = BlogPostSerializer
     lookup_field = 'slug'
