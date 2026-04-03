@@ -1,4 +1,4 @@
-export const HeroSection = () => {
+export const HeroSection = ({ dictionary }: { dictionary: { description: string } }) => {
   return (
     <section
       id="about"
@@ -44,10 +44,7 @@ export const HeroSection = () => {
 
         {/* Краткое био */}
         <p className="text-white/60 max-w-2xl font-mono text-sm leading-relaxed mb-10">
-          Специализируюсь на проектировании отказоустойчивых систем,
-          цифровизации бизнес-процессов и веб-разработке. Объединяю
-          DevOps-практики с современной архитектурой на базе Linux, Django и
-          React.
+          {dictionary.description}
         </p>
 
         {/* Быстрые действия */}

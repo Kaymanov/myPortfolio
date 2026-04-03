@@ -1,4 +1,5 @@
 from django.contrib import admin
+from modeltranslation.admin import TranslationAdmin
 from .models import SkillGroup, Skill, Project, Experience, Education, BlogPost, ContactMessage
 # Register your models here.
 
@@ -15,23 +16,23 @@ class SkillAdmin(admin.ModelAdmin):
     search_fields = ('name',)
 
 @admin.register(Project)
-class ProjectAdmin(admin.ModelAdmin):
+class ProjectAdmin(TranslationAdmin):
     list_display = ('title', 'created_at')
     search_fields = ('title', 'description')
 
 @admin.register(Experience)
-class ExperienceAdmin(admin.ModelAdmin):
+class ExperienceAdmin(TranslationAdmin):
     list_display = ('title', 'company', 'date_range', 'end_date', 'status', 'objective')
     search_fields = ('title', 'company', 'objective')
 
 
 @admin.register(Education)
-class EducationAdmin(admin.ModelAdmin):
+class EducationAdmin(TranslationAdmin):
     list_display = ('degree', 'institution', 'date_range', 'status')
     search_fields = ('degree', 'institution')
 
 @admin.register(BlogPost)
-class BlogPostAdmin(admin.ModelAdmin):
+class BlogPostAdmin(TranslationAdmin):
     list_display = ('title', 'slug', 'created_at', 'is_published')
     search_fields = ('title', 'slug')
     list_filter = ('is_published',)

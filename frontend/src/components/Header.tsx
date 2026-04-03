@@ -3,21 +3,24 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { LanguageSwitcher } from "./LanguageSwitcher";
 
 export const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  
+  const currentLang = pathname.split("/")[1] === "en" ? "en" : "ru";
 
   // Проверяем, находимся ли мы на главной странице
-  const isHome = pathname === "/";
+  const isHome = pathname === "/" || pathname === `/${currentLang}`;
 
   // Массив нашей навигации
   const navLinks = [
-    { name: "SKILLS", path: isHome ? "#skills" : "/#skills" },
-    { name: "EXPERIENCE", path: isHome ? "#experience" : "/#experience" },
-    { name: "PROJECTS", path: isHome ? "#projects" : "/#projects" },
-    { name: "KNOWLEDGE_BASE", path: "/blog" },
-    { name: "CONTACT", path: isHome ? "#contact" : "/#contact" },
+    { name: "SKILLS", path: isHome ? "#skills" : `/${currentLang}#skills` },
+    { name: "EXPERIENCE", path: isHome ? "#experience" : `/${currentLang}#experience` },
+    { name: "PROJECTS", path: isHome ? "#projects" : `/${currentLang}#projects` },
+    { name: "KNOWLEDGE_BASE", path: `/${currentLang}/blog` },
+    { name: "CONTACT", path: isHome ? "#contact" : `/${currentLang}#contact` },
   ];
 
   // Функция для плавного скролла (если мы уже на главной)
@@ -71,13 +74,19 @@ export const Header = () => {
           ))}
         </nav>
 
-        {/* КНОПКА МЕНЮ ДЛЯ МОБИЛОК (Твоя идея с кнопочкой) */}
+        <div className="flex items-center">
+          <div className="hidden md:block">
+            <LanguageSwitcher />
+          </div>
+
+          {/* КНОПКА МЕНЮ ДЛЯ МОБИЛОК (Твоя идея с кнопочкой) */}
         <button
           onClick={() => setIsOpen(!isOpen)}
           className="md:hidden text-terminal-green border border-terminal-green/50 px-3 py-1.5 uppercase hover:bg-terminal-green hover:text-terminal-bg transition-colors"
         >
           {isOpen ? "[ CLOSE ]" : "[ MENU ]"}
         </button>
+        </div>
       </div>
 
       {/* ВЫПАДАЮЩЕЕ МЕНЮ ДЛЯ МОБИЛОК */}
@@ -94,6 +103,10 @@ export const Header = () => {
               ./{link.name.toLowerCase()}.sh
             </Link>
           ))}
+          <div className="p-4 border-b border-terminal-green/10 flex items-center justify-between">
+            <span className="text-white/80 uppercase tracking-widest text-xs">Language:</span>
+            <LanguageSwitcher />
+          </div>
         </nav>
       )}
     </header>

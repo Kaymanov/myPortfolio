@@ -6,15 +6,15 @@ import { Metadata, ResolvingMetadata } from "next";
 
 // В Next.js 15+ params — это Promise, поэтому типизируем и разворачиваем его через await
 interface BlogPostPageProps {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string; lang: string }>;
 }
 
 export async function generateMetadata(
   { params }: BlogPostPageProps,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
-  const { slug } = await params;
-  const post = await getBlogPost(slug);
+  const { slug, lang } = await params;
+  const post = await getBlogPost(slug, lang);
 
   if (!post) {
     return {
@@ -43,10 +43,10 @@ export async function generateMetadata(
 }
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
-  const { slug } = await params;
+  const { slug, lang } = await params;
 
   // Запрашиваем статью
-  const post = await getBlogPost(slug);
+  const post = await getBlogPost(slug, lang);
 
   // Если статья не найдена (вернулся null), показываем встроенную страницу 404
   if (!post) {
@@ -78,7 +78,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
         {/* Кнопка "Назад" */}
         <Link
-          href="/blog"
+          href={`/${lang}/blog`}
           className="text-sm border border-terminal-green/50 text-terminal-green px-4 py-2 hover:bg-terminal-green hover:text-terminal-bg transition-colors shrink-0 text-center"
         >
           [ cd .. ] BACK TO LOGS

@@ -1,18 +1,24 @@
 import { BlogPost } from "@/types";
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api";
 
-export async function getSkills() {
+const getHeaders = (lang: string) => ({
+  "Accept-Language": lang,
+});
+
+export async function getSkills(lang: string = "ru") {
   const res = await fetch(`${BASE_URL}/skills/`, {
-    next: { tags: ['skills'], revalidate: 3600 }, // Кэшируем данные на час (фишка Next.js)
+    headers: getHeaders(lang),
+    next: { tags: ["skills"], revalidate: 3600 }, // Кэшируем данные на час (фишка Next.js)
   });
 
   if (!res.ok) throw new Error("Failed to fetch skills");
   return res.json();
 }
 
-export async function getProjects() {
+export async function getProjects(lang: string = "ru") {
   const res = await fetch(`${BASE_URL}/projects/`, {
-    next: { tags: ['projects'], revalidate: 3600 },
+    headers: getHeaders(lang),
+    next: { tags: ["projects"], revalidate: 3600 },
   });
 
   if (!res.ok) throw new Error("Failed to fetch projects");
@@ -21,10 +27,11 @@ export async function getProjects() {
 
 // В файле src/lib/api.ts
 
-export async function getExperience() {
+export async function getExperience(lang: string = "ru") {
   try {
     const res = await fetch(`${BASE_URL}/experience/`, {
-      next: { tags: ['experience'], revalidate: 3600 }, // Кэшируем на час
+      headers: getHeaders(lang),
+      next: { tags: ["experience"], revalidate: 3600 }, // Кэшируем на час
     });
 
     if (!res.ok) return []; // Если эндпоинта еще нет, не ломаем сайт, отдаем пустой массив
@@ -35,10 +42,11 @@ export async function getExperience() {
   }
 }
 
-export async function getEducation() {
+export async function getEducation(lang: string = "ru") {
   try {
     const res = await fetch(`${BASE_URL}/education/`, {
-      next: { tags: ['education'], revalidate: 3600 },
+      headers: getHeaders(lang),
+      next: { tags: ["education"], revalidate: 3600 },
     });
 
     if (!res.ok) return [];
@@ -49,10 +57,11 @@ export async function getEducation() {
   }
 }
 
-export async function getBlogPosts() {
+export async function getBlogPosts(lang: string = "ru") {
   try {
     const res = await fetch(`${BASE_URL}/blogposts/`, {
-      next: { tags: ['blogposts'], revalidate: 3600 },
+      headers: getHeaders(lang),
+      next: { tags: ["blogposts"], revalidate: 3600 },
     });
 
     if (!res.ok) return [];
@@ -63,10 +72,11 @@ export async function getBlogPosts() {
   }
 }
 
-export async function getBlogPost(slug: string): Promise<BlogPost | null> {
+export async function getBlogPost(slug: string, lang: string = "ru"): Promise<BlogPost | null> {
   try {
     // Предполагается, что твой Django API умеет искать по slug
     const res = await fetch(`${BASE_URL}/blogposts/${slug}/`, {
+      headers: getHeaders(lang),
       next: { tags: [`blogpost-${slug}`], revalidate: 3600 }, // Кэшируем на час
     });
 

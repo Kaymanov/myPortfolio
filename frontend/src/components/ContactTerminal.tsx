@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 
-export const ContactTerminal = () => {
+export const ContactTerminal = ({ dictionary }: { dictionary: { description: string, notice: string } }) => {
   const [formData, setFormData] = useState({
     alias: "",
     email: "",
@@ -89,20 +89,13 @@ export const ContactTerminal = () => {
 
             {/* CTA Текст */}
             <p className="text-white/80 text-sm leading-relaxed mb-4">
-              Вашей инфраструктуре нужен рефакторинг? Бизнес-процессы требуют
-              автоматизации, а серверы — надежной защиты? Инициируйте протокол
-              связи.
+              {dictionary.description}
             </p>
 
             {/* Дисклеймер (B2B/B2C) */}
             <div className="border-l-2 border-terminal-green/50 pl-3 py-1 mb-8 bg-terminal-green/5">
               <p className="text-terminal-green/80 text-xs leading-relaxed">
-                <span className="font-bold text-terminal-green">
-                  [*] NOTICE:
-                </span>{" "}
-                Поддерживаю соединения как с юридическими (B2B), так и с
-                физическими лицами. SLA и условия сотрудничества компилируются
-                индивидуально.
+                {dictionary.notice}
               </p>
             </div>
           </div>

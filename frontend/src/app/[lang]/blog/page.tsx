@@ -8,9 +8,10 @@ export const metadata: Metadata = {
   description: "Экспертные статьи про разработку сайтов, системное администрирование корпоративной IT инфраструктуры и интеграцию ИИ агентов.",
 };
 
-export default async function BlogIndex() {
+export default async function BlogIndex({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang } = await params;
   // Запрашиваем все посты с бэкенда
-  const posts: BlogPost[] = await getBlogPosts();
+  const posts: BlogPost[] = await getBlogPosts(lang);
 
   // Форматер даты в терминальном стиле (YYYY.MM.DD)
   const formatTStamp = (dateString: string) => {
@@ -37,7 +38,7 @@ export default async function BlogIndex() {
 
           {/* Кнопка "Назад" в стиле терминала */}
           <Link
-            href="/"
+            href={`/${lang}`}
             className="text-sm border border-terminal-green/50 text-terminal-green px-4 py-2 hover:bg-terminal-green hover:text-terminal-bg transition-colors shrink-0 text-center"
           >
             [ cd .. ] RETURN TO ROOT
@@ -74,7 +75,7 @@ export default async function BlogIndex() {
               </div>
 
               {/* Заголовок и ссылка */}
-              <Link href={`/blog/${post.slug}`} className="block">
+              <Link href={`/${lang}/blog/${post.slug}`} className="block">
                 <h2 className="text-lg md:text-xl font-bold mb-3 uppercase tracking-tight text-terminal-green group-hover:text-white transition-colors duration-300">
                   <span className="opacity-50 mr-2">{">"}</span>
                   {post.title}
@@ -89,7 +90,7 @@ export default async function BlogIndex() {
               {/* Кнопка чтения */}
               <div>
                 <Link
-                  href={`/blog/${post.slug}`}
+                  href={`/${lang}/blog/${post.slug}`}
                   className="inline-block text-[10px] uppercase border border-terminal-green/30 text-terminal-green px-3 py-1.5 hover:bg-terminal-green hover:text-terminal-bg transition-colors font-bold tracking-widest"
                 >
                   [ EXECUTE READ_LOG ]

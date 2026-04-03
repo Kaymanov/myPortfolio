@@ -14,18 +14,21 @@ import { EducationMemory } from "@/components/EducationMemory";
 import { ContactTerminal } from "@/components/ContactTerminal";
 import { HeroSection } from "@/components/HeroSection";
 import { BlogPreview } from "@/components/BlogPreview";
+import { getDictionary, Locale } from "@/i18n/dictionaries";
 
-export default async function Home() {
+export default async function Home({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang } = await params;
+  const dictionary = await getDictionary(lang as Locale);
   // Получаем данные напрямую с бэкенда
-  const skillGroups: SkillGroup[] = await getSkills();
-  const projects: Project[] = await getProjects();
-  const experienceLogs: Experience[] = await getExperience();
-  const educationRecords: Education[] = await getEducation();
-  const allPosts: BlogPost[] = await getBlogPosts(); // Запрашиваем посты
+  const skillGroups: SkillGroup[] = await getSkills(lang);
+  const projects: Project[] = await getProjects(lang);
+  const experienceLogs: Experience[] = await getExperience(lang);
+  const educationRecords: Education[] = await getEducation(lang);
+  const allPosts: BlogPost[] = await getBlogPosts(lang); // Запрашиваем посты
   return (
     <main className="p-4 md:p-8 max-w-6xl mx-auto relative min-h-screen">
       {/* Секция Hero */}
-      <HeroSection />
+      <HeroSection dictionary={dictionary.hero} />
       <section id="blog" className="mb-24">
         <h2 className="text-xl mb-12 flex items-center gap-2 uppercase tracking-widest border-b border-terminal-green/30 pb-2">
           <span className="text-terminal-green opacity-50">{">"}</span>
@@ -116,7 +119,7 @@ export default async function Home() {
       </section>
       {/* СЕКЦИЯ CONTACT (CTA) */}
       <section id="contact" className="mb-32 scroll-mt-20">
-        <ContactTerminal />
+        <ContactTerminal dictionary={dictionary.contact} />
       </section>
       {/* Эффект мерцания */}
       <div className="crt-overlay" />
