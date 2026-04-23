@@ -3,16 +3,25 @@ import Link from "next/link";
 import { Project } from "@/types";
 
 export const ProjectCard = ({ project }: { project: Project }) => {
-  // МАГИЯ ДЛЯ КАРТИНОК ИЗ DJANGO:
-  // Если Django вернул путь начинающийся с http (уже полный), берем его.
-  // Если вернул относительный (/media/...), подклеиваем адрес бэкенда.
+  // КАРТИНКИ ИЗ DJANGO (ПРОДАКШЕН ВЕРСИЯ):
   const getImageUrl = (imagePath?: string) => {
     if (!imagePath) return null;
-    if (imagePath.startsWith("http")) return imagePath; // Если путь уже полный
 
-    // Гарантируем, что слэш не задублируется и не потеряется
-    const cleanPath = imagePath.startsWith("/") ? imagePath : `/${imagePath}`;
-    return `http://127.0.0.1:8000${cleanPath}`;
+    // 1. Вычищаем все внутренние адреса Докера и локалхоста,
+    // заменяя их на публичный домен.
+    let cleanPath = imagePath
+      .replace("http://backend:8000", "https://iamroot.pro")
+      .replace("http://portfolio-backend:8000", "https://iamroot.pro")
+      .replace("http://127.0.0.1:8000", "https://iamroot.pro")
+      .replace("http://localhost:8000", "https://iamroot.pro");
+
+    // 2. Если Django вернул просто относительный путь (/media/...),
+    // подклеиваем к нему публичный домен.
+    if (cleanPath.startsWith("/")) {
+      cleanPath = `https://iamroot.pro${cleanPath}`;
+    }
+
+    return cleanPath;
   };
 
   const imageUrl = getImageUrl(project.image);
