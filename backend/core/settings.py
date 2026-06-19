@@ -31,9 +31,15 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'True') == 'True'  # По умолчанию True, но в проде нужно ставить False в .env    
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,iamroot.pro').split(',')
 
-CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:3000').split(',')
+CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:3000,https://iamroot.pro').split(',')
+
+# --- CSRF & Security for production behind nginx ---
+CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'https://iamroot.pro,http://localhost:3000').split(',')
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Application definition
 
@@ -88,11 +94,11 @@ WSGI_APPLICATION = 'core.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'portfolio_db',
-        'USER': os.getenv('USER_BD'),
-        'PASSWORD': os.getenv('USER_PASSWORD_BD'),
-        'HOST': 'localhost',
-        'PORT': os.getenv('PORT_BD'),
+        'NAME': os.getenv('DB_NAME', 'portfolio'),
+        'USER': os.getenv('USER_BD', 'kayal'),
+        'PASSWORD': os.getenv('USER_PASSWORD_BD', 'bd#Tehn0l0gy'),
+        'HOST': os.getenv('DB_HOST', 'db'),
+        'PORT': os.getenv('PORT_BD', '5432'),
     }
 }
 
@@ -163,3 +169,7 @@ ADMIN_EMAIL = EMAIL_HOST_USER
 
 FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://127.0.0.1:3000')
 REVALIDATION_SECRET = os.environ.get('REVALIDATION_SECRET', 'super-secret-revalidation-key-123')
+
+
+USE_X_FORWARDED_HOST = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
