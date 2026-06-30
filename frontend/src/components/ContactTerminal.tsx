@@ -81,13 +81,18 @@ export const ContactTerminal = ({
   });
   const [startTime, setStartTime] = useState<number>(0);
   const [status, setStatus] = useState<ContactStatus>("IDLE");
+  // Сообщение об ошибке от сервера (например, причина отклонения валидации),
+  // показывается вместо общего текста, если сервер вернул detail.
+  const [serverError, setServerError] = useState<string | null>(null);
 
   // Таймеры/контроллеры, требующие очистки при размонтировании.
   const resetTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const abortRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
-    // Инициализируем таймер при загрузке компонента
+    // Инициализируем таймер при загрузке компонента. Если по какой-то причине
+    // эффект ещё не успел отработать к моменту отправки, fallback в handleSubmit
+    // не даст time_elapsed стать некорректно маленьким.
     setStartTime(Date.now());
   }, []);
 
@@ -111,7 +116,12 @@ export const ContactTerminal = ({
     }
 
     setStatus("TRANSMITTING");
-    const timeElapsed = Date.now() - startTime;
+    setServerError(null);
+    // Fallback: если startTime ещё 0 (эффект не успел), считаем от текущего
+    // момента, но не даём time_elapsed быть подозрительно маленьким — реальный
+    // пользователь всё равно тратит время на заполнение.
+    const effectiveStart = startTime || Date.now();
+    const timeElapsed = Date.now() - effectiveStart;
 
     const controller = new AbortController();
     abortRef.current = controller;
@@ -137,9 +147,28 @@ export const ContactTerminal = ({
         },
       );
 
-      outcome = response.ok
-        ? { kind: "ok" }
-        : { kind: "status", status: response.status };
+      if (response.ok) {
+        outcome = { kind: "ok" };
+      } else {
+        outcome = { kind: "status", status: response.status };
+        // Пытаемся извлечь причину отказа от сервера (DRF возвращает detail
+        // или {поле: [сообщение]}), чтобы показать пользователю конкретику.
+        try {
+          const data = await response.json();
+          const detail =
+            typeof data?.detail === "string"
+              ? data.detail
+              : typeof data === "object" && data
+                ? Object.values(data)
+                    .flat()
+                    .filter((v) => typeof v === "string")
+                    .join(" ")
+                : null;
+          if (detail) setServerError(detail);
+        } catch {
+          // тело не JSON — оставляем общее сообщение
+        }
+      }
     } catch {
       // Прерывание по тайм-ауту или сетевая ошибка → сетевой исход (R2.7).
       outcome = { kind: "network" };
@@ -166,7 +195,11 @@ export const ContactTerminal = ({
 
   const transmitting = status === "TRANSMITTING";
   const fieldsDisabled = transmitting; // R2.6
-  const currentMessage = statusMessage(status, messages);
+  // Для ошибок показываем конкретное сообщение сервера, если оно есть.
+  const currentMessage =
+    isErrorStatus(status) && serverError
+      ? serverError
+      : statusMessage(status, messages);
 
   return (
     <div className="border border-terminal-green/30 bg-terminal-bg p-6 relative overflow-hidden font-mono mx-auto shadow-[0_0_15px_rgba(74,246,38,0.05)]">
