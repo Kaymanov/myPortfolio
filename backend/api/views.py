@@ -51,7 +51,11 @@ class ContactRateThrottle(AnonRateThrottle):
 class ContactMessageCreateView(generics.CreateAPIView):
     queryset = ContactMessage.objects.all()
     serializer_class = ContactMessageSerializer
-    throttle_classes = [ContactRateThrottle] # Включаем защиту от спама
+    throttle_classes = [ContactRateThrottle]  # Включаем защиту от спама
+    # Публичный анонимный эндпоинт: убираем SessionAuthentication, иначе DRF
+    # требует CSRF-токен на POST ("CSRF Failed: CSRF token missing"). Сессии
+    # здесь не используются; защита обеспечивается honeypot + time-trap + throttle.
+    authentication_classes = []
 
     def perform_create(self, serializer):
         # 1. Сохраняем в базу данных
