@@ -14,7 +14,7 @@ export const Footer = () => {
   }, []);
 
   return (
-    <footer className="fixed bottom-0 left-0 w-full bg-terminal-green text-terminal-bg px-4 py-1 flex justify-between items-center font-mono text-[10px] md:text-xs z-50">
+    <footer className="fixed bottom-0 left-0 w-full bg-terminal-green text-terminal-bg px-4 py-1 flex justify-between items-center font-mono text-2xs md:text-xs z-50">
       {/* Левая часть: Статус */}
       <div className="flex gap-4">
         <span className="font-bold">STATUS: ONLINE</span>

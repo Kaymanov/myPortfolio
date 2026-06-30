@@ -17,6 +17,8 @@ load_dotenv()
 
 from pathlib import Path
 
+from core.env import require_env, get_bool
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -25,21 +27,37 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
+# Security-critical configuration read strictly from the environment (R4.1, R4.2,
+# R5.1). require_env collects ALL missing/empty variables and raises MissingEnvError
+# at settings-import time — before binding to a network port — listing every
+# missing name (fail-fast).
+_required = require_env('SECRET_KEY', 'ALLOWED_HOSTS', 'CORS_ALLOWED_ORIGINS')
+
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY')
+SECRET_KEY = _required['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', 'True') == 'True'  # По умолчанию True, но в проде нужно ставить False в .env    
+# Missing/empty DEBUG → off by default (R4.3).
+DEBUG = get_bool("DEBUG", default=False)
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,iamroot.pro').split(',')
+ALLOWED_HOSTS = [h.strip() for h in _required['ALLOWED_HOSTS'].split(',') if h.strip()]
 
-CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:3000,https://iamroot.pro').split(',')
+CORS_ALLOWED_ORIGINS = [
+    o.strip() for o in _required['CORS_ALLOWED_ORIGINS'].split(',') if o.strip()
+]
 
-# --- CSRF & Security for production behind nginx ---
-CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'https://iamroot.pro,http://localhost:3000').split(',')
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+# CORS strictly by allow-list: cross-origin requests from origins not in the list
+# receive no CORS headers (R4.6).
+CORS_ALLOW_ALL_ORIGINS = False
+
+# CSRF доверенные источники для работы админки за nginx (HTTPS-прокси).
+CSRF_TRUSTED_ORIGINS = [
+    o.strip()
+    for o in os.getenv(
+        'CSRF_TRUSTED_ORIGINS', 'https://iamroot.pro,https://www.iamroot.pro'
+    ).split(',')
+    if o.strip()
+]
 
 # Application definition
 
@@ -53,6 +71,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
+    'martor',
     'api',
 ]
 
@@ -155,9 +174,9 @@ EMAIL_PORT = 465
 EMAIL_USE_SSL = True  # Яндекс требует SSL на 465 порту
 EMAIL_USE_TLS = False  # Если бы использовался порт 587, тогда нужно было бы включить TLS и отключить SSL
 
-# Доступы берем из переменных окружения (в целях безопасности)
-EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'akaymanov@schooltech.ru')
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '') # Твой пароль должен быть в .env
+# Доступы берём только из окружения, без литеральных fallback (R5.1).
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
 
 
 # От кого будут приходить письма (Яндекс требует, чтобы это совпадало с EMAIL_HOST_USER)
@@ -168,8 +187,56 @@ ADMIN_EMAIL = EMAIL_HOST_USER
 #ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL', 'akaymanov@schooltech.ru')
 
 FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://127.0.0.1:3000')
-REVALIDATION_SECRET = os.environ.get('REVALIDATION_SECRET', 'super-secret-revalidation-key-123')
+# Только из окружения, без литерального fallback (R5.1). Пустое значение →
+# Revalidation_Webhook отключается (R5.2); это не fail-fast.
+REVALIDATION_SECRET = os.environ.get('REVALIDATION_SECRET', '')
 
 
 USE_X_FORWARDED_HOST = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+
+# --- Production security hardening (R4.4) ---
+# Применяется только при выключенном DEBUG, т.е. в продакшен-развёртывании.
+if not DEBUG:
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_SSL_REDIRECT = True
+    # Health-эндпоинт пингуется Docker'ом напрямую по HTTP (минуя nginx,
+    # который ставит X-Forwarded-Proto). Без исключения SECURE_SSL_REDIRECT
+    # вернул бы 301 на внутренний запрос → контейнер был бы "unhealthy".
+    SECURE_REDIRECT_EXEMPT = [r"^api/health$"]
+    X_FRAME_OPTIONS = "DENY"  # XFrameOptionsMiddleware уже в MIDDLEWARE
+
+
+# --- MARTOR (Markdown-редактор в админке) ---
+MARTOR_THEME = 'bootstrap'
+# Глобальные настройки редактора
+MARTOR_ENABLE_CONFIGS = {
+    'emoji': 'true',
+    'imgur': 'false',       # загрузку картинок на imgur выключаем
+    'mention': 'false',
+    'jquery': 'true',
+    'living': 'false',      # live-превью по запросу, не на каждый ввод
+    'spellcheck': 'false',
+    'hljs': 'true',         # подсветка кода в превью
+}
+# Кнопки тулбара
+MARTOR_TOOLBAR_BUTTONS = [
+    'bold', 'italic', 'horizontal', 'heading', 'pre-code', 'blockquote',
+    'unordered-list', 'ordered-list', 'link', 'image-link', 'toggle-maximize',
+]
+# Markdown-расширения для серверного превью (включая блоки кода с подсветкой)
+MARTOR_MARKDOWN_EXTENSIONS = [
+    'markdown.extensions.extra',
+    'markdown.extensions.nl2br',
+    'markdown.extensions.smarty',
+    'markdown.extensions.fenced_code',
+    'markdown.extensions.codehilite',
+]
+# Безопасность: какие теги/атрибуты разрешены при рендере превью (bleach).
+MARTOR_ENABLE_LABEL = False

@@ -1,4 +1,6 @@
+import logging
 from django.shortcuts import render
+from django.http import JsonResponse
 from rest_framework import viewsets
 from rest_framework import generics
 from rest_framework.throttling import AnonRateThrottle
@@ -6,6 +8,15 @@ from django.core.mail import send_mail
 from django.conf import settings
 from .models import SkillGroup, Project, Experience, Education, BlogPost, ContactMessage
 from .serializers import SkillGroupSerializer, ProjectSerializer, ExperienceSerializer, EducationSerializer, BlogPostSerializer, ContactMessageSerializer
+
+logger = logging.getLogger(__name__)
+
+
+def health_check(request):
+    """Лёгкий health-эндпоинт для Docker healthcheck (без обращения к БД)."""
+    return JsonResponse({"status": "ok"})
+
+
 # Create your views here.
 class SkillGroupViewSet(viewsets.ReadOnlyModelViewSet):
     """
@@ -67,7 +78,7 @@ class ContactMessageCreateView(generics.CreateAPIView):
                 recipient_list=[settings.ADMIN_EMAIL],  # Кому (тебе)
                 fail_silently=False # В проде лучше False, чтобы ловить ошибки почты
             )
-            print("SMTP: Пакет успешно отправлен")
+            logger.info("SMTP: Пакет успешно отправлен для %s", instance.sender_alias)
         except Exception as e:
-            # Если почта отвалилась, в базу всё равно запишется
-            print(f"SMTP Error: {e}")
+            # Сообщение уже сохранено в БД; сбой доставки письма не меняет его.
+            logger.error("SMTP delivery failed: %s", e)

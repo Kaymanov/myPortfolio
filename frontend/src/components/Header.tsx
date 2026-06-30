@@ -8,7 +8,7 @@ import { LanguageSwitcher } from "./LanguageSwitcher";
 export const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
-  
+
   const currentLang = pathname.split("/")[1] === "en" ? "en" : "ru";
 
   // Проверяем, находимся ли мы на главной странице
@@ -17,8 +17,14 @@ export const Header = () => {
   // Массив нашей навигации
   const navLinks = [
     { name: "SKILLS", path: isHome ? "#skills" : `/${currentLang}#skills` },
-    { name: "EXPERIENCE", path: isHome ? "#experience" : `/${currentLang}#experience` },
-    { name: "PROJECTS", path: isHome ? "#projects" : `/${currentLang}#projects` },
+    {
+      name: "EXPERIENCE",
+      path: isHome ? "#experience" : `/${currentLang}#experience`,
+    },
+    {
+      name: "PROJECTS",
+      path: isHome ? "#projects" : `/${currentLang}#projects`,
+    },
     { name: "KNOWLEDGE_BASE", path: `/${currentLang}/blog` },
     { name: "CONTACT", path: isHome ? "#contact" : `/${currentLang}#contact` },
   ];
@@ -55,7 +61,7 @@ export const Header = () => {
         </Link>
 
         {/* НАВИГАЦИЯ ДЛЯ ДЕСКТОПА */}
-        <nav className="hidden md:flex gap-6">
+        <nav className="hidden md:flex gap-6" aria-label="Основная навигация">
           {navLinks.map((link) => (
             <Link
               key={link.name}
@@ -80,18 +86,25 @@ export const Header = () => {
           </div>
 
           {/* КНОПКА МЕНЮ ДЛЯ МОБИЛОК (Твоя идея с кнопочкой) */}
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className="md:hidden text-terminal-green border border-terminal-green/50 px-3 py-1.5 uppercase hover:bg-terminal-green hover:text-terminal-bg transition-colors"
-        >
-          {isOpen ? "[ CLOSE ]" : "[ MENU ]"}
-        </button>
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            aria-expanded={isOpen}
+            aria-controls="mobile-nav"
+            aria-label={isOpen ? "Закрыть меню" : "Открыть меню"}
+            className="md:hidden text-terminal-green border border-terminal-green/50 px-3 py-1.5 uppercase hover:bg-terminal-green hover:text-terminal-bg transition-colors"
+          >
+            {isOpen ? "[ CLOSE ]" : "[ MENU ]"}
+          </button>
         </div>
       </div>
 
       {/* ВЫПАДАЮЩЕЕ МЕНЮ ДЛЯ МОБИЛОК */}
       {isOpen && (
-        <nav className="md:hidden border-t border-terminal-green/30 bg-black flex flex-col">
+        <nav
+          id="mobile-nav"
+          className="md:hidden border-t border-terminal-green/30 bg-black flex flex-col"
+          aria-label="Мобильная навигация"
+        >
           {navLinks.map((link) => (
             <Link
               key={link.name}
@@ -104,7 +117,9 @@ export const Header = () => {
             </Link>
           ))}
           <div className="p-4 border-b border-terminal-green/10 flex items-center justify-between">
-            <span className="text-white/80 uppercase tracking-widest text-xs">Language:</span>
+            <span className="text-white/80 uppercase tracking-widest text-xs">
+              Language:
+            </span>
             <LanguageSwitcher />
           </div>
         </nav>

@@ -52,3 +52,7 @@ media/
 
 #md files
 *.md
+
+# specs & editor (локально, не в репозиторий)
+.kiro/
+.vscode/

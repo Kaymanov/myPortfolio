@@ -22,6 +22,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('api.urls')), # Подключаем наше API
+    path('martor/', include('martor.urls')), # Markdown-редактор (превью, загрузка)
 ]
 
 # Это нужно, чтобы Django мог отдавать картинки проектов

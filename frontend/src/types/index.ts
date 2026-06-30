@@ -54,6 +54,11 @@ export interface BlogPost {
   excerpt: string;
   content: string;
   created_at: string; // Django отдает дату строкой (ISO)
+  updated_at?: string;
   tags: string[];
   is_published: boolean;
+  // SEO (необязательные; при пустых используются title/excerpt)
+  meta_title?: string;
+  meta_description?: string;
+  og_image?: string;
 }

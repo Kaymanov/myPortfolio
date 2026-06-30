@@ -11,7 +11,7 @@ class EducationTranslationOptions(TranslationOptions):
     fields = ('institution', 'degree', 'record_type',)
 
 class BlogPostTranslationOptions(TranslationOptions):
-    fields = ('title', 'excerpt', 'content',)
+    fields = ('title', 'excerpt', 'content', 'meta_title', 'meta_description',)
 
 translator.register(Project, ProjectTranslationOptions)
 translator.register(Experience, ExperienceTranslationOptions)

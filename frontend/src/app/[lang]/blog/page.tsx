@@ -5,10 +5,15 @@ import { getBlogPosts } from "@/lib/api";
 
 export const metadata: Metadata = {
   title: "Терминал Знаний | Блог",
-  description: "Экспертные статьи про разработку сайтов, системное администрирование корпоративной IT инфраструктуры и интеграцию ИИ агентов.",
+  description:
+    "Экспертные статьи про разработку сайтов, системное администрирование корпоративной IT инфраструктуры и интеграцию ИИ агентов.",
 };
 
-export default async function BlogIndex({ params }: { params: Promise<{ lang: string }> }) {
+export default async function BlogIndex({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}) {
   const { lang } = await params;
   // Запрашиваем все посты с бэкенда
   const posts: BlogPost[] = await getBlogPosts(lang);
@@ -25,11 +30,11 @@ export default async function BlogIndex({ params }: { params: Promise<{ lang: st
       <header className="mb-16 mt-20 border-b border-terminal-green/30 pb-6">
         <div className="flex flex-col md:flex-row md:justify-between md:items-end gap-4 mb-4">
           <div>
-            <div className="text-terminal-green/50 text-[10px] uppercase tracking-widest mb-2">
+            <div className="text-terminal-green/50 text-2xs uppercase tracking-widest mb-2">
               // DIRECTORY LISTING
             </div>
             <h1
-              className="text-2xl md:text-3xl font-bold uppercase tracking-widest text-glitch text-terminal-green"
+              className="text-2xl md:text-2xl font-bold uppercase tracking-widest text-glitch text-terminal-green break-words"
               data-text="/VAR/LOG/KNOWLEDGE_BASE"
             >
               /VAR/LOG/KNOWLEDGE_BASE
@@ -62,7 +67,7 @@ export default async function BlogIndex({ params }: { params: Promise<{ lang: st
               <div className="absolute -left-[5px] top-1.5 w-2 h-2 bg-terminal-bg border border-terminal-green group-hover:bg-terminal-green transition-colors duration-300 group-hover:shadow-[0_0_8px_rgba(74,246,38,0.8)]" />
 
               {/* Мета-информация (Дата, ID, Теги) */}
-              <div className="flex flex-wrap gap-x-6 gap-y-2 text-[10px] text-terminal-green/50 mb-3 uppercase tracking-wider">
+              <div className="flex flex-wrap gap-x-6 gap-y-2 text-2xs text-terminal-green/50 mb-3 uppercase tracking-wider">
                 <span>T-STAMP: {formatTStamp(post.created_at)}</span>
                 <span>
                   ID: 0x{post.id.toString(16).toUpperCase().padStart(4, "0")}
@@ -91,7 +96,7 @@ export default async function BlogIndex({ params }: { params: Promise<{ lang: st
               <div>
                 <Link
                   href={`/${lang}/blog/${post.slug}`}
-                  className="inline-block text-[10px] uppercase border border-terminal-green/30 text-terminal-green px-3 py-1.5 hover:bg-terminal-green hover:text-terminal-bg transition-colors font-bold tracking-widest"
+                  className="inline-block text-2xs uppercase border border-terminal-green/30 text-terminal-green px-3 py-1.5 hover:bg-terminal-green hover:text-terminal-bg transition-colors font-bold tracking-widest"
                 >
                   [ EXECUTE READ_LOG ]
                 </Link>

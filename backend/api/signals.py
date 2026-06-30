@@ -5,6 +5,8 @@ import requests
 import logging
 
 from .models import Skill, SkillGroup, Project, Experience, Education, BlogPost
+from .seo.indexnow import submit_indexnow, build_blogpost_urls
+from .seo.sitemap_ping import ping_sitemap
 
 logger = logging.getLogger(__name__)
 
@@ -51,3 +53,14 @@ def revalidate_blogposts(sender, instance, **kwargs):
     if instance and getattr(instance, 'slug', None):
         tags.append(f"blogpost-{instance.slug}")
     trigger_nextjs_revalidation(tags)
+
+    # После ревалидации уведомляем поисковые системы (R14.1, R14.6).
+    # Любая ошибка логируется и НИКОГДА не прерывает поток save/delete (R14.4):
+    # сами SEO-функции внутренне устойчивы, но добавляем защитный guard.
+    slug = getattr(instance, 'slug', None) if instance else None
+    try:
+        if slug and getattr(instance, 'is_published', False):
+            submit_indexnow(build_blogpost_urls(slug))
+        ping_sitemap()
+    except Exception as e:  # noqa: BLE001 - устойчивость превыше всего
+        logger.error(f"Ошибка при уведомлении SEO-сервисов для BlogPost: {e}")

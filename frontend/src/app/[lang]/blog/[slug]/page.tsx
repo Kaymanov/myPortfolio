@@ -1,8 +1,10 @@
-import ReactMarkdown from "react-markdown";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getBlogPost } from "@/lib/api";
 import { Metadata, ResolvingMetadata } from "next";
+import { MarkdownContent } from "@/components/MarkdownContent";
+import { JsonLd } from "@/components/JsonLd";
+import { buildArticleLd, buildBreadcrumbLd } from "@/lib/structuredData";
 
 // В Next.js 15+ params — это Promise, поэтому типизируем и разворачиваем его через await
 interface BlogPostPageProps {
@@ -11,7 +13,7 @@ interface BlogPostPageProps {
 
 export async function generateMetadata(
   { params }: BlogPostPageProps,
-  parent: ResolvingMetadata
+  parent: ResolvingMetadata,
 ): Promise<Metadata> {
   const { slug, lang } = await params;
   const post = await getBlogPost(slug, lang);
@@ -22,22 +24,38 @@ export async function generateMetadata(
     };
   }
 
+  const seoTitle = post.meta_title?.trim() || post.title;
+  const seoDescription = post.meta_description?.trim() || post.excerpt;
+  const canonical = `https://iamroot.pro/${lang}/blog/${slug}`;
+  const ogImages = post.og_image ? [{ url: post.og_image }] : undefined;
+
   return {
-    title: post.title,
-    description: post.excerpt,
+    title: seoTitle,
+    description: seoDescription,
     keywords: post.tags,
+    alternates: {
+      canonical,
+      languages: {
+        ru: `https://iamroot.pro/ru/blog/${slug}`,
+        en: `https://iamroot.pro/en/blog/${slug}`,
+        "x-default": `https://iamroot.pro/ru/blog/${slug}`,
+      },
+    },
     openGraph: {
-      title: post.title,
-      description: post.excerpt,
+      title: seoTitle,
+      description: seoDescription,
       type: "article",
       publishedTime: post.created_at,
+      modifiedTime: post.updated_at,
       tags: post.tags,
-      url: `https://iamroot.pro/blog/${slug}`,
+      url: canonical,
+      images: ogImages,
     },
     twitter: {
       card: "summary_large_image",
-      title: post.title,
-      description: post.excerpt,
+      title: seoTitle,
+      description: seoDescription,
+      images: post.og_image ? [post.og_image] : undefined,
     },
   };
 }
@@ -59,17 +77,25 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(d.getDate()).padStart(2, "0")} ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
   };
 
+  // --- Структурированные данные (JSON-LD) ---
+  // Чистые билдеры возвращают null при отсутствии обязательных свойств,
+  // и тогда соответствующий блок опускается целиком (R11.6).
+  const articleLd = buildArticleLd(post, lang);
+  const breadcrumbLd = buildBreadcrumbLd(post, lang);
+
   return (
     <main className="p-4 md:p-8 max-w-4xl mx-auto relative min-h-screen font-mono pb-32 overflow-x-hidden w-full">
+      {articleLd && <JsonLd data={articleLd} />}
+      {breadcrumbLd && <JsonLd data={breadcrumbLd} />}
       {/* ПАНЕЛЬ УПРАВЛЕНИЯ (Шапка) */}
       <header className="mb-10 mt-20 border-b border-terminal-green/30 pb-6 flex flex-col md:flex-row md:justify-between md:items-start gap-6">
         <div>
-          <div className="text-terminal-green/50 text-[10px] uppercase tracking-widest mb-2 flex items-center gap-2">
+          <div className="text-terminal-green/50 text-2xs uppercase tracking-widest mb-2 flex items-center gap-2">
             <span className="w-2 h-2 bg-terminal-green animate-pulse inline-block" />
             READING LOG_FILE: {slug}.log
           </div>
           <h1
-            className="text-2xl md:text-3xl font-bold uppercase tracking-tight text-terminal-green text-glitch"
+            className="text-2xl md:text-2xl font-bold uppercase tracking-tight text-terminal-green text-glitch break-words"
             data-text={post.title}
           >
             {post.title}
@@ -86,7 +112,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       </header>
 
       {/* МЕТА-ДАННЫЕ ФАЙЛА */}
-      <div className="bg-terminal-green/5 border border-terminal-green/20 p-4 mb-10 text-[10px] md:text-xs text-terminal-green/70 uppercase flex flex-col gap-2">
+      <div className="bg-terminal-green/5 border border-terminal-green/20 p-4 mb-10 text-2xs md:text-xs text-terminal-green/70 uppercase flex flex-col gap-2">
         <div className="flex justify-between">
           <span>
             FILE_ID: 0x{post.id.toString(16).toUpperCase().padStart(4, "0")}
@@ -111,8 +137,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
       {/* ТЕЛО СТАТЬИ (Контент) */}
       <article className="prose prose-sm md:prose-base prose-invert prose-p:text-white/80 prose-headings:text-terminal-green prose-a:text-terminal-green hover:prose-a:text-white prose-a:underline prose-a:underline-offset-4 prose-code:text-terminal-green prose-code:bg-terminal-green/10 prose-code:px-1 prose-code:py-0.5 prose-code:rounded-none prose-pre:bg-[#0a0a0a] prose-pre:border prose-pre:border-terminal-green/20 max-w-none ">
-        {/* Рендерим HTML, который пришел из Django */}
-        <ReactMarkdown>{post.content}</ReactMarkdown>
+        <MarkdownContent content={post.content} />
       </article>
 
       {/* КОНЕЦ ФАЙЛА */}

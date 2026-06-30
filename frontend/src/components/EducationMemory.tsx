@@ -33,7 +33,7 @@ export const EducationMemory = ({ records }: EducationMemoryProps) => {
             <div className="absolute inset-0 bg-[linear-gradient(transparent_50%,rgba(74,246,38,0.05)_50%)] bg-[length:100%_4px] pointer-events-none opacity-50" />
 
             {/* Верхняя панель карточки (Адрес памяти и Статус) */}
-            <div className="flex justify-between items-start mb-4 border-b border-terminal-green/20 pb-2 text-[10px] md:text-xs">
+            <div className="flex justify-between items-start mb-4 border-b border-terminal-green/20 pb-2 text-2xs md:text-xs">
               <div className="flex gap-2 items-center">
                 <span className="text-terminal-green/50">ADDR:</span>
                 <span className="text-terminal-green font-bold tracking-widest">
@@ -48,7 +48,7 @@ export const EducationMemory = ({ records }: EducationMemoryProps) => {
             </div>
 
             {/* Тип записи (Ядро или Патч) */}
-            <div className="text-[10px] text-terminal-green/40 uppercase mb-1 flex items-center gap-2">
+            <div className="text-2xs text-terminal-green/40 uppercase mb-1 flex items-center gap-2">
               <span className="inline-block w-2 h-2 bg-terminal-green/40 animate-pulse" />
               TYPE: {record.record_type}
             </div>
@@ -62,13 +62,13 @@ export const EducationMemory = ({ records }: EducationMemoryProps) => {
             </h4>
 
             {/* Учебное заведение */}
-            <div className="text-white/70 text-[11px] mb-4 uppercase">
+            <div className="text-white/70 text-xs mb-4 uppercase">
               // {record.institution}
             </div>
 
             {/* Нижняя панель (Даты и декоративный хэш) */}
             <div className="mt-auto pt-3 flex justify-between items-end opacity-60">
-              <div className="text-[10px]">
+              <div className="text-2xs">
                 <span className="text-terminal-green/50 mr-1">T-STAMP:</span>
                 {record.date_range}
               </div>

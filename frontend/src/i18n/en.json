@@ -7,6 +7,13 @@
   },
   "contact": {
     "description": "Does your infrastructure need refactoring? Do business processes require automation, and servers — reliable protection? Initiate the communication protocol.",
-    "notice": "[*] NOTICE: I support connections with both legal entities (B2B) and individuals. SLA and terms of cooperation are compiled individually."
+    "notice": "[*] NOTICE: I support connections with both legal entities (B2B) and individuals. SLA and terms of cooperation are compiled individually.",
+    "status": {
+      "transmitting": "[ ... ] Transmitting packet. Awaiting confirmation.",
+      "success": "[ OK ] Packet delivered. Connection closed.",
+      "errorValidation": "[ ERROR ] Packet rejected by server. Check your input and retry transmission.",
+      "errorThrottle": "[ LIMIT ] Submission limit reached. Please try again later.",
+      "errorNetwork": "[ NETWORK ] Could not establish connection with the server. Retry transmission."
+    }
   }
 }

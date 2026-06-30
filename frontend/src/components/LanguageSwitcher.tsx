@@ -25,28 +25,36 @@ export const LanguageSwitcher = () => {
   };
 
   return (
-    <div className="flex items-center gap-2 font-mono text-[10px] md:text-xs font-bold uppercase cursor-pointer relative z-50 ml-4 mr-0 md:mr-4">
-      <span
+    <div className="flex items-center gap-2 font-mono text-2xs md:text-xs font-bold uppercase relative z-50 ml-4 mr-0 md:mr-4">
+      <button
+        type="button"
         onClick={() => switchLanguage("ru")}
-        className={`transition-colors px-1 select-none py-0.5 ${
+        aria-label="Переключить на русский язык"
+        aria-pressed={currentLang === "ru"}
+        className={`transition-colors px-1 select-none py-0.5 cursor-pointer ${
           currentLang === "ru"
             ? "text-terminal-bg bg-terminal-green"
             : "text-terminal-green hover:text-white"
         }`}
       >
         RU
+      </button>
+      <span className="text-terminal-green/30 select-none" aria-hidden="true">
+        |
       </span>
-      <span className="text-terminal-green/30 select-none">|</span>
-      <span
+      <button
+        type="button"
         onClick={() => switchLanguage("en")}
-        className={`transition-colors px-1 select-none py-0.5 ${
+        aria-label="Switch to English language"
+        aria-pressed={currentLang === "en"}
+        className={`transition-colors px-1 select-none py-0.5 cursor-pointer ${
           currentLang === "en"
             ? "text-terminal-bg bg-terminal-green"
             : "text-terminal-green hover:text-white"
         }`}
       >
         EN
-      </span>
+      </button>
     </div>
   );
 };

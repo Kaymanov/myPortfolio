@@ -8,8 +8,41 @@
   --color-terminal-bg: #050505;
   --color-terminal-border: #1a1a1a;
 
-  /* Шрифт */
+  /* Шрифт. JetBrains Mono / Fira Code не грузятся как веб-шрифты —
+     при их отсутствии сразу применяется системный monospace, поэтому
+     текст всегда виден (нет невидимого текста в период загрузки, R7.5/7.6).
+     Веб-шрифты Geist подключены через next/font с display:swap (см. layout.tsx). */
   --font-mono: "JetBrains Mono", "Fira Code", monospace;
+
+  /* --- ЕДИНАЯ ТИПОГРАФИЧЕСКАЯ ШКАЛА (R7.1) ---
+     Ровно 8 ступеней используются на всех страницах: 2xs, xs, sm, base, lg,
+     xl, 2xl, 4xl. Все line-height зафиксированы в диапазоне 1.1–1.8.
+     Начертаний используется 2 (normal 400 / bold 700) — в пределах ≤4. */
+
+  /* 1) 2xs — микро-метки терминала (адреса, таймстемпы, теги) */
+  --text-2xs: 0.625rem; /* 10px */
+  --text-2xs--line-height: 1.4;
+
+  /* 2) xs — мелкий вспомогательный текст */
+  --text-xs--line-height: 1.5;
+
+  /* 3) sm — мелкий основной текст */
+  --text-sm--line-height: 1.6;
+
+  /* 4) base — основной текст */
+  --text-base--line-height: 1.7;
+
+  /* 5) lg — мелкие заголовки */
+  --text-lg--line-height: 1.5;
+
+  /* 6) xl — заголовки секций */
+  --text-xl--line-height: 1.4;
+
+  /* 7) 2xl — заголовки страниц */
+  --text-2xl--line-height: 1.25;
+
+  /* 8) 4xl — hero-заголовок */
+  --text-4xl--line-height: 1.15;
 }
 
 :root {
@@ -19,6 +52,19 @@
 
 body {
   font-family: var(--font-mono);
+}
+
+/* --- ДОСТУПНОСТЬ: ВИДИМЫЙ ФОКУС С КЛАВИАТУРЫ --- */
+/* Раньше у интерактивных элементов не было индикатора фокуса.
+   focus-visible срабатывает только при навигации с клавиатуры,
+   не мешая кликам мышью. Контраст ≥3:1 обеспечен зелёным на чёрном. */
+:focus-visible {
+  outline: 2px solid var(--color-terminal-green);
+  outline-offset: 2px;
+}
+/* Убираем стандартный синий outline там, где есть свой focus-visible */
+:focus:not(:focus-visible) {
+  outline: none;
 }
 
 /* Тот самый эффект старого монитора */
@@ -83,7 +129,7 @@ body::after {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
+  width: 100%;
   height: 100vh;
   z-index: 999; /* Поверх всего */
   pointer-events: none; /* Не мешает кликам */
@@ -264,5 +310,37 @@ body::after {
 @keyframes shimmer {
   100% {
     transform: translateX(100%);
+  }
+}
+
+/* --- УВАЖЕНИЕ К PREFERS-REDUCED-MOTION (обязательно) --- */
+/* Декоративная анимация — это эстетика терминала, но она не должна
+   навязываться пользователям, у которых включён режим уменьшенного движения
+   (вестибулярные расстройства, экономия батареи и т.п.).
+   Сохраняем сам вид (цвета, сканлайны статичны), убираем только движение. */
+@media (prefers-reduced-motion: reduce) {
+  /* Постоянная анимация шума/снега — главный источник нагрузки на GPU */
+  body::after {
+    animation: none;
+  }
+
+  /* Глитч-текст: показываем стабильный текст без дёрганья */
+  .text-glitch {
+    animation: none;
+  }
+  .text-glitch::before,
+  .text-glitch::after {
+    display: none;
+  }
+
+  /* Глушим все прочие анимации/переходы, но не мгновенно (0.01ms),
+     чтобы изменения состояний оставались считываемыми */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

@@ -1,8 +1,14 @@
-import Image from "next/image";
 import Link from "next/link";
 import { Project } from "@/types";
+import { SafeImage } from "@/components/SafeImage";
 
-export const ProjectCard = ({ project }: { project: Project }) => {
+export const ProjectCard = ({
+  project,
+  priority = false,
+}: {
+  project: Project;
+  priority?: boolean;
+}) => {
   // КАРТИНКИ ИЗ DJANGO (ПРОДАКШЕН ВЕРСИЯ):
   const getImageUrl = (imagePath?: string) => {
     if (!imagePath) return null;
@@ -27,30 +33,23 @@ export const ProjectCard = ({ project }: { project: Project }) => {
   const imageUrl = getImageUrl(project.image);
 
   return (
-    <div className="border border-terminal-border bg-terminal-bg/50 group hover:border-terminal-green transition-all duration-300 p-2 relative overflow-hidden flex flex-col h-full">
+    <div className="border border-terminal-border bg-terminal-bg/50 group hover:border-terminal-green transition-colors duration-300 p-2 relative overflow-hidden flex flex-col h-full">
       {/* Эффект свечения при наведении */}
       <div className="absolute inset-0 bg-terminal-green/5 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity" />
 
-      {/* Превью проекта */}
-      <div className="relative aspect-video mb-3 overflow-hidden border border-terminal-border bg-black shrink-0">
-        {imageUrl ? (
-          <Image
-            src={imageUrl}
-            alt={project.title}
-            fill
-            unoptimized // Временно отключаем оптимизацию Next.js для картинок из Django
-            priority
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            className="object-cover opacity-50 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            <span className="text-[10px] opacity-20 uppercase">No Signal</span>
-          </div>
-        )}
-        {/* Сетка поверх картинки для стиля */}
-        <div className="absolute inset-0 bg-[url('/noise.png')] opacity-10 pointer-events-none" />
-      </div>
+      {/* Превью проекта — фикс. aspect-ratio резервирует место (нет CLS),
+          а при отсутствии/сбое картинки SafeImage сам рисует [ No Signal ]. */}
+      <SafeImage
+        src={imageUrl ?? undefined}
+        alt={project.title}
+        aspectRatio="16 / 9"
+        containerClassName="mb-3 shrink-0"
+        unoptimized // Временно отключаем оптимизацию Next.js для картинок из Django
+        priority={priority}
+        loading={priority ? undefined : "lazy"}
+        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+        className="opacity-50 group-hover:opacity-100 group-hover:scale-105 transition-[transform,opacity] duration-300 ease-out"
+      />
 
       {/* Информация */}
       <div className="p-2 relative z-10 flex flex-col flex-grow">
@@ -61,7 +60,7 @@ export const ProjectCard = ({ project }: { project: Project }) => {
           <span className="opacity-50 mr-2">{">"}</span>
           {project.title}
         </h4>
-        <p className="text-[11px] text-white/60 leading-relaxed mb-4 line-clamp-2">
+        <p className="text-xs text-white/60 leading-relaxed mb-4 line-clamp-2">
           {project.description}
         </p>
 
@@ -70,7 +69,7 @@ export const ProjectCard = ({ project }: { project: Project }) => {
           {project.technologies.map((tech, i) => (
             <span
               key={i}
-              className="text-[9px] px-1.5 py-0.5 border border-terminal-green/20 text-terminal-green/60 uppercase"
+              className="text-2xs px-1.5 py-0.5 border border-terminal-green/20 text-terminal-green/60 uppercase"
             >
               {tech}
             </span>
@@ -84,7 +83,7 @@ export const ProjectCard = ({ project }: { project: Project }) => {
               href={project.link}
               target="_blank" // Открываем в новой вкладке
               rel="noopener noreferrer" // Безопасность при внешних ссылках
-              className="inline-flex items-center gap-2 text-[10px] uppercase font-bold bg-terminal-green text-terminal-bg px-2 py-1 hover:bg-white transition-colors"
+              className="inline-flex items-center gap-2 text-2xs uppercase font-bold bg-terminal-green text-terminal-bg px-2 py-1 hover:bg-white transition-colors"
             >
               <span>[ RUN ]</span>
               {/* Маленькая иконка внешней ссылки */}
@@ -103,7 +102,7 @@ export const ProjectCard = ({ project }: { project: Project }) => {
               </svg>
             </Link>
           ) : (
-            <span className="text-[10px] opacity-30 italic text-terminal-green">
+            <span className="text-2xs opacity-30 italic text-terminal-green">
               // Offline mode only
             </span>
           )}

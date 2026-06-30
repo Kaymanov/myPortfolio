@@ -1,18 +1,18 @@
-export const HeroSection = ({ dictionary }: { dictionary: { description: string } }) => {
+import { DigitalHeadLoader } from "./DigitalHeadLoader";
+
+export const HeroSection = ({
+  dictionary,
+}: {
+  dictionary: { description: string };
+}) => {
   return (
     <section
       id="about"
       className="min-h-[70vh] flex flex-col justify-center relative mb-20 mt-20"
     >
-      {/* Декоративный фоновый элемент (Абстрактная сетка/Лого) */}
-      <div className="absolute right-0 top-1/2 -translate-y-1/2 opacity-5 pointer-events-none hidden lg:block text-[8px] leading-none font-mono text-terminal-green">
-        {`
-          01001001 01000001 01001101
-          01010010 01001111 01001111 01010100
-          ... SYSTEM BOOT SEQ INITIALIZED ...
-          KERN_V: 5.15.0-generic
-          ARCH: x86_64
-        `}
+      {/* 3D wireframe-голова — доворачивается за курсором и деформируется */}
+      <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[clamp(260px,34vw,520px)] aspect-square opacity-70 pointer-events-none hidden lg:block">
+        <DigitalHeadLoader />
       </div>
 
       <div className="relative z-10">
@@ -29,7 +29,7 @@ export const HeroSection = ({ dictionary }: { dictionary: { description: string 
 
         {/* Главный заголовок с глитчем */}
         <h1
-          className="text-4xl md:text-6xl font-bold text-terminal-green mb-2 uppercase tracking-tighter text-glitch"
+          className="text-4xl md:text-4xl font-bold text-terminal-green mb-2 uppercase tracking-tighter text-glitch"
           data-text="ANDREY KAYMANOV"
         >
           ANDREY KAYMANOV

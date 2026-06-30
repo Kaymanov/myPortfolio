@@ -39,18 +39,18 @@ export const ExperienceTimeline = ({
           >
             {/* Дата и статус (Слева на десктопе) */}
             <div className="mb-4 md:mb-0 md:w-36 md:text-right md:pr-10 md:pt-1 shrink-0">
-              <div className="text-terminal-green/50 text-[10px] tracking-widest mb-1">
+              <div className="text-terminal-green/50 text-2xs tracking-widest mb-1">
                 {period}
               </div>
               <div
-                className={`text-[9px] px-1.5 py-0.5 inline-block border uppercase ${statusClean === "ACTIVE" ? "border-terminal-green bg-terminal-green/10 text-terminal-green" : "border-terminal-green/30 text-terminal-green/40"}`}
+                className={`text-2xs px-1.5 py-0.5 inline-block border uppercase ${statusClean === "ACTIVE" ? "border-terminal-green bg-terminal-green/10 text-terminal-green" : "border-terminal-green/30 text-terminal-green/40"}`}
               >
                 [{statusClean}]
               </div>
             </div>
 
             {/* Узел-квадрат на линии */}
-            <div className="absolute left-0 top-1.5 w-2.5 h-2.5 border border-terminal-green bg-terminal-bg group-hover:bg-terminal-green group-hover:shadow-[0_0_10px_rgba(74,246,38,0.5)] transition-all duration-300 md:left-36 md:-translate-x-[5px]" />
+            <div className="absolute left-0 top-1.5 w-2.5 h-2.5 border border-terminal-green bg-terminal-bg group-hover:bg-terminal-green group-hover:shadow-[0_0_10px_rgba(74,246,38,0.5)] transition-[background-color,box-shadow] duration-200 ease-out md:left-36 md:-translate-x-[5px]" />
 
             {/* Контент (Справа) */}
             <div className="md:pl-10 flex-1">
@@ -64,25 +64,25 @@ export const ExperienceTimeline = ({
               </h4>
 
               {/* Компания */}
-              <div className="text-terminal-green/70 text-[11px] uppercase tracking-wider mb-4 border-b border-terminal-green/10 pb-2">
+              <div className="text-terminal-green/70 text-xs uppercase tracking-wider mb-4 border-b border-terminal-green/10 pb-2">
                 @ {log.company}
               </div>
 
               {/* Описание задач */}
-              <p className="text-white/70 mb-4 text-[11px] leading-relaxed whitespace-pre-wrap">
+              <p className="text-white/70 mb-4 text-xs leading-relaxed whitespace-pre-wrap">
                 {log.objective}
               </p>
 
               {/* Стек технологий (из details) */}
               {log.details && log.details.length > 0 && (
                 <div className="flex gap-2 flex-wrap mt-4">
-                  <span className="text-terminal-green/40 text-[9px] uppercase pt-0.5 mr-1">
+                  <span className="text-terminal-green/40 text-2xs uppercase pt-0.5 mr-1">
                     STACK:
                   </span>
                   {log.details.map((tech, i) => (
                     <span
                       key={i}
-                      className="text-[9px] px-1.5 py-0.5 border border-terminal-green/20 text-terminal-green/60 uppercase hover:text-terminal-green hover:border-terminal-green/50 transition-colors"
+                      className="text-2xs px-1.5 py-0.5 border border-terminal-green/20 text-terminal-green/60 uppercase hover:text-terminal-green hover:border-terminal-green/50 transition-colors"
                     >
                       {tech}
                     </span>

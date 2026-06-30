@@ -28,11 +28,11 @@ export const BlogPreview = ({ posts }: BlogPreviewProps) => {
           <Link
             href={`/blog/${post.slug}`}
             key={post.id}
-            className="block border border-terminal-green/30 bg-terminal-bg p-5 hover:border-terminal-green transition-all group relative overflow-hidden"
+            className="block border border-terminal-green/30 bg-terminal-bg p-5 hover:border-terminal-green transition-colors group relative overflow-hidden"
           >
             <div className="absolute inset-0 bg-terminal-green/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
 
-            <div className="text-[10px] text-terminal-green/50 mb-3 flex justify-between border-b border-terminal-green/20 pb-2">
+            <div className="text-2xs text-terminal-green/50 mb-3 flex justify-between border-b border-terminal-green/20 pb-2">
               <span>SYS_LOG: {post.id.toString().padStart(4, "0")}</span>
               <span>T-STAMP: {formatTStamp(post.created_at)}</span>
             </div>
@@ -50,7 +50,7 @@ export const BlogPreview = ({ posts }: BlogPreviewProps) => {
               {post.tags.map((tag) => (
                 <span
                   key={tag}
-                  className="text-[9px] px-1 border border-terminal-green/20 text-terminal-green/60 uppercase"
+                  className="text-2xs px-1 border border-terminal-green/20 text-terminal-green/60 uppercase"
                 >
                   {tag}
                 </span>

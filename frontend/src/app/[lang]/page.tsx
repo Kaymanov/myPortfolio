@@ -15,8 +15,64 @@ import { ContactTerminal } from "@/components/ContactTerminal";
 import { HeroSection } from "@/components/HeroSection";
 import { BlogPreview } from "@/components/BlogPreview";
 import { getDictionary, Locale } from "@/i18n/dictionaries";
+import { JsonLd } from "@/components/JsonLd";
+import type { Metadata } from "next";
+import {
+  buildPageMetadata,
+  type LocaleContent,
+  type SupportedLocale,
+} from "@/lib/metadata";
 
-export default async function Home({ params }: { params: Promise<{ lang: string }> }) {
+const HOME_KEYWORDS = [
+  "Разработка сайтов",
+  "Администрирование IT инфраструктуры",
+  "Обслуживание серверов",
+  "Интеграция ИИ агентов",
+  "Автоматизация бизнес процессов",
+  "DevOps",
+  "Full-Stack разработка",
+];
+
+// Локализованный контент главной: title/description на активной локали (R10.1).
+// Длины приводятся к инвариантам билдером (title 1–60, description 50–160).
+const HOME_CONTENT: Record<SupportedLocale, LocaleContent> = {
+  ru: {
+    title: "IAMROOT | Разработка сайтов и IT инфраструктура",
+    description:
+      "Профессиональная разработка сайтов, интеграция ИИ-агентов, автоматизация бизнес-процессов и администрирование корпоративной IT-инфраструктуры.",
+  },
+  en: {
+    title: "IAMROOT | Website Development and IT Infrastructure",
+    description:
+      "Professional website development, AI agent integration, business process automation and corporate IT infrastructure administration and support.",
+  },
+};
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}): Promise<Metadata> {
+  const { lang } = await params;
+  const active =
+    lang === "ru" || lang === "en"
+      ? HOME_CONTENT[lang as SupportedLocale]
+      : null;
+  return buildPageMetadata({
+    lang,
+    path: "",
+    active,
+    fallback: HOME_CONTENT.ru,
+    ogType: "website",
+    keywords: HOME_KEYWORDS,
+  });
+}
+
+export default async function Home({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}) {
   const { lang } = await params;
   const dictionary = await getDictionary(lang as Locale);
   // Получаем данные напрямую с бэкенда
@@ -25,8 +81,28 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
   const experienceLogs: Experience[] = await getExperience(lang);
   const educationRecords: Education[] = await getEducation(lang);
   const allPosts: BlogPost[] = await getBlogPosts(lang); // Запрашиваем посты
+
+  // --- Структурированные данные (JSON-LD) для главной ---
+  const personLd = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: "Andrey Kaymanov",
+    url: "https://iamroot.pro",
+    jobTitle: "Deputy Director of IT / Infrastructure Architect",
+    sameAs: ["https://t.me/Kaymanov_Andrey"],
+  };
+  const websiteLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "IAMROOT.PRO",
+    url: "https://iamroot.pro",
+    inLanguage: lang === "en" ? "en" : "ru",
+  };
+
   return (
     <main className="p-4 md:p-8 max-w-6xl mx-auto relative min-h-screen">
+      <JsonLd data={personLd} />
+      <JsonLd data={websiteLd} />
       {/* Секция Hero */}
       <HeroSection dictionary={dictionary.hero} />
       <section id="blog" className="mb-24">
@@ -86,8 +162,12 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
         {/* Сетка проектов */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {projects.length > 0 ? (
-            projects.map((project) => (
-              <ProjectCard key={project.id} project={project} />
+            projects.map((project, index) => (
+              <ProjectCard
+                key={project.id}
+                project={project}
+                priority={index < 3}
+              />
             ))
           ) : (
             <div className="col-span-full py-10 border border-dashed border-terminal-green/20 text-center opacity-40 italic text-sm">

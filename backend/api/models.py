@@ -59,10 +59,28 @@ class BlogPost(models.Model):
     title = models.CharField(max_length=200)
     slug = models.SlugField(max_length=200, unique=True, blank=True)
     excerpt = models.TextField(help_text="Краткое описание для превью")
-    content = models.TextField(help_text="Полный текст статьи (можно использовать Markdown/HTML)")
+    content = models.TextField(help_text="Полный текст статьи (Markdown)")
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     tags = models.JSONField(default=list, help_text="Список тегов, например ['Linux', 'Proxmox']")
     is_published = models.BooleanField(default=True)
+
+    # --- SEO ---
+    meta_title = models.CharField(
+        max_length=70,
+        blank=True,
+        help_text="SEO-заголовок (<title>). Если пусто — берётся title. Рекомендуется до 60 символов.",
+    )
+    meta_description = models.CharField(
+        max_length=160,
+        blank=True,
+        help_text="SEO meta description. Если пусто — берётся excerpt. Рекомендуется 50–160 символов.",
+    )
+    og_image = models.ImageField(
+        upload_to='blog/og/',
+        blank=True,
+        help_text="Картинка для соцсетей (Open Graph). Рекомендуется 1200×630.",
+    )
 
     def save(self, *args, **kwargs):
         if not self.slug:
