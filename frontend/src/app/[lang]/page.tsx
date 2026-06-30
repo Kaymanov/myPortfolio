@@ -75,12 +75,16 @@ export default async function Home({
 }) {
   const { lang } = await params;
   const dictionary = await getDictionary(lang as Locale);
-  // Получаем данные напрямую с бэкенда
-  const skillGroups: SkillGroup[] = await getSkills(lang);
-  const projects: Project[] = await getProjects(lang);
-  const experienceLogs: Experience[] = await getExperience(lang);
-  const educationRecords: Education[] = await getEducation(lang);
-  const allPosts: BlogPost[] = await getBlogPosts(lang); // Запрашиваем посты
+  // Получаем данные параллельно (Promise.all) — один сетевой раунд вместо
+  // пяти последовательных await, что кратно ускоряет SSR главной страницы.
+  const [skillGroups, projects, experienceLogs, educationRecords, allPosts] =
+    await Promise.all([
+      getSkills(lang),
+      getProjects(lang),
+      getExperience(lang),
+      getEducation(lang),
+      getBlogPosts(lang),
+    ]);
 
   // --- Структурированные данные (JSON-LD) для главной ---
   const personLd = {

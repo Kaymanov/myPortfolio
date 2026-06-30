@@ -205,11 +205,10 @@ if not DEBUG:
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
-    SECURE_SSL_REDIRECT = True
-    # Health-эндпоинт пингуется Docker'ом напрямую по HTTP (минуя nginx,
-    # который ставит X-Forwarded-Proto). Без исключения SECURE_SSL_REDIRECT
-    # вернул бы 301 на внутренний запрос → контейнер был бы "unhealthy".
-    SECURE_REDIRECT_EXEMPT = [r"^api/health$"]
+    # SECURE_SSL_REDIRECT НЕ включаем: http→https редирект уже делает nginx
+    # (return 301 на порту 80). Если включить здесь, Django редиректит на https
+    # и внутренние SSR-запросы фронта (http://backend:8000, без заголовка
+    # X-Forwarded-Proto) ломаются с "wrong version number" → таймауты ~30с.
     X_FRAME_OPTIONS = "DENY"  # XFrameOptionsMiddleware уже в MIDDLEWARE
 
 
