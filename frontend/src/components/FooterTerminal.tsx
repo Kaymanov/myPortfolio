@@ -263,20 +263,32 @@ export const FooterTerminal = () => {
           </div>
 
           {/* Строка ввода */}
-          <form onSubmit={handleSubmit} className="flex shrink-0 mt-1">
+          <form
+            onSubmit={handleSubmit}
+            className="flex items-center shrink-0 mt-1"
+          >
             <span className="text-terminal-green mr-2">root@iamroot:~$</span>
-            {/* Нативная каретка инпута окрашена в терминальный зелёный и стоит
-                сразу после набранного текста — как в настоящем терминале. */}
+            {/* Ширина инпута растёт по длине текста (моноширинный шрифт → ch
+                точен), поэтому блок-каретка ниже стоит сразу за набранным
+                текстом, а не у правого края. Нативную каретку прячем
+                (caret-transparent) — вместо неё показываем фирменный блок. */}
             <input
               ref={inputRef}
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               aria-label="Ввод команды терминала"
-              className="flex-1 bg-transparent border-none outline-none text-white/80 focus:ring-0 p-0 caret-terminal-green"
+              style={{ width: `${Math.max(input.length, 1)}ch` }}
+              className="bg-transparent border-none outline-none text-white/80 focus:ring-0 p-0 caret-transparent"
               spellCheck={false}
               autoComplete="off"
             />
+            {/* Фирменная моргающая блок-каретка — всегда приглашает попробовать
+                терминал; стоит вплотную к тексту благодаря авто-ширине инпута. */}
+            <span className="w-2 h-4 bg-terminal-green animate-pulse inline-block translate-y-0.5" />
+            {/* Остаток строки — кликабельная зона, чтобы фокусировать инпут по
+                клику в любом месте строки ввода. */}
+            <span className="flex-1" aria-hidden="true" />
           </form>
 
           {/* Сканлайн поверх терминала */}
