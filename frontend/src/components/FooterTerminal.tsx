@@ -284,8 +284,9 @@ export const FooterTerminal = () => {
               autoComplete="off"
             />
             {/* Фирменная моргающая блок-каретка — всегда приглашает попробовать
-                терминал; стоит вплотную к тексту благодаря авто-ширине инпута. */}
-            <span className="w-2 h-4 bg-terminal-green animate-pulse inline-block translate-y-0.5" />
+                терминал; стоит вплотную к тексту благодаря авто-ширине инпута.
+                Выравнивание по центру строки обеспечивает items-center формы. */}
+            <span className="w-2 h-4 bg-terminal-green animate-pulse inline-block" />
             {/* Остаток строки — кликабельная зона, чтобы фокусировать инпут по
                 клику в любом месте строки ввода. */}
             <span className="flex-1" aria-hidden="true" />

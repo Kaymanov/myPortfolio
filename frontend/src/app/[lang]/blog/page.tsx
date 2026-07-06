@@ -25,16 +25,16 @@ export default async function BlogIndex({
   };
 
   return (
-    <main className="p-4 md:p-8 max-w-4xl mx-auto relative min-h-screen font-mono pb-32">
+    <main className="p-4 md:p-8 max-w-4xl mx-auto relative min-h-screen font-mono pb-32 overflow-x-hidden w-full">
       {/* Шапка директории и навигация назад */}
       <header className="mb-16 mt-20 border-b border-terminal-green/30 pb-6">
         <div className="flex flex-col md:flex-row md:justify-between md:items-end gap-4 mb-4">
-          <div>
+          <div className="min-w-0">
             <div className="text-terminal-green/50 text-2xs uppercase tracking-widest mb-2">
               // DIRECTORY LISTING
             </div>
             <h1
-              className="text-2xl md:text-2xl font-bold uppercase tracking-widest text-glitch text-terminal-green break-words"
+              className="text-xl sm:text-2xl font-bold uppercase tracking-wide sm:tracking-widest text-glitch text-terminal-green break-all"
               data-text="/VAR/LOG/KNOWLEDGE_BASE"
             >
               /VAR/LOG/KNOWLEDGE_BASE
