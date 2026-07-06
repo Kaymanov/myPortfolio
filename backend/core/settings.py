@@ -227,8 +227,7 @@ MARTOR_ENABLE_CONFIGS = {
 # Кнопки тулбара
 MARTOR_TOOLBAR_BUTTONS = [
     'bold', 'italic', 'horizontal', 'heading', 'pre-code', 'blockquote',
-    'unordered-list', 'ordered-list', 'link', 'image-link',
-    # 'toggle-maximize' убран: развёрнутый редактор перекрывает кнопку Save
+    'unordered-list', 'ordered-list', 'link', 'image-link', 'toggle-maximize',
 ]
 # Markdown-расширения для серверного превью (включая блоки кода с подсветкой)
 MARTOR_MARKDOWN_EXTENSIONS = [
@@ -240,6 +239,3 @@ MARTOR_MARKDOWN_EXTENSIONS = [
 ]
 # Безопасность: какие теги/атрибуты разрешены при рендере превью (bleach).
 MARTOR_ENABLE_LABEL = False
-# Высота редактора — ограничиваем, чтобы кнопка Save не уезжала за пределы
-# экрана (по умолчанию martor может расти бесконечно).
-MARTOR_MARKDOWN_BASE_EDITOR_CSS = "min-height: 300px; max-height: 500px; overflow-y: auto;"

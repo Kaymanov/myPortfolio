@@ -69,7 +69,7 @@ class BlogPost(models.Model):
     meta_title = models.CharField(
         max_length=100,
         blank=True,
-        help_text="SEO-заголовок (<title>). Если пусто — берётся title. Рекомендуется до 60 символов, но можно до 100.",
+        help_text="SEO-заголовок страницы (тег title). Если пусто — берётся title. Рекомендуется до 60 символов, но можно до 100.",
     )
     meta_description = models.CharField(
         max_length=300,
