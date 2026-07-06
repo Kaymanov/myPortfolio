@@ -56,8 +56,8 @@ export const Header = () => {
           onClick={() => setIsOpen(false)}
         >
           <span className="animate-pulse w-2 h-4 bg-terminal-green inline-block" />
-          <span className="hidden sm:inline">root@iamroot.pro:~#</span>
-          <span className="sm:hidden">~/root</span>
+          <span className="hidden sm:inline">admin@iamroot.pro:~#</span>
+          <span className="sm:hidden">~/admin</span>
         </Link>
 
         {/* НАВИГАЦИЯ ДЛЯ ДЕСКТОПА */}

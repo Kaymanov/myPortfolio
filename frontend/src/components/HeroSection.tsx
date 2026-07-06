@@ -23,7 +23,7 @@ export const HeroSection = ({
 
         {/* Имитация ввода команды */}
         <div className="text-white/60 font-mono text-sm md:text-base mb-6">
-          <span className="text-terminal-green">root@iamroot.pro:~$</span>{" "}
+          <span className="text-terminal-green">admin@iamroot.pro:~$</span>{" "}
           whoami
         </div>
 
