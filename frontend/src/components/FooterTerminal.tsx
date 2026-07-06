@@ -265,18 +265,18 @@ export const FooterTerminal = () => {
           {/* Строка ввода */}
           <form onSubmit={handleSubmit} className="flex shrink-0 mt-1">
             <span className="text-terminal-green mr-2">root@iamroot:~$</span>
+            {/* Нативная каретка инпута окрашена в терминальный зелёный и стоит
+                сразу после набранного текста — как в настоящем терминале. */}
             <input
               ref={inputRef}
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               aria-label="Ввод команды терминала"
-              className="flex-1 bg-transparent border-none outline-none text-white/80 focus:ring-0 p-0"
+              className="flex-1 bg-transparent border-none outline-none text-white/80 focus:ring-0 p-0 caret-terminal-green"
               spellCheck={false}
               autoComplete="off"
             />
-            {/* Каретка терминала (моргающий квадрат) */}
-            <span className="w-2 h-4 bg-terminal-green animate-pulse ml-1 inline-block translate-y-0.5" />
           </form>
 
           {/* Сканлайн поверх терминала */}
