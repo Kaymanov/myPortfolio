@@ -67,14 +67,14 @@ class BlogPost(models.Model):
 
     # --- SEO ---
     meta_title = models.CharField(
-        max_length=70,
+        max_length=100,
         blank=True,
-        help_text="SEO-заголовок (<title>). Если пусто — берётся title. Рекомендуется до 60 символов.",
+        help_text="SEO-заголовок (<title>). Если пусто — берётся title. Рекомендуется до 60 символов, но можно до 100.",
     )
     meta_description = models.CharField(
-        max_length=160,
+        max_length=300,
         blank=True,
-        help_text="SEO meta description. Если пусто — берётся excerpt. Рекомендуется 50–160 символов.",
+        help_text="SEO meta description. Если пусто — берётся excerpt. Рекомендуется 120–160 символов.",
     )
     og_image = models.ImageField(
         upload_to='blog/og/',
