@@ -5,7 +5,7 @@ class ProjectTranslationOptions(TranslationOptions):
     fields = ('title', 'description',)
 
 class ExperienceTranslationOptions(TranslationOptions):
-    fields = ('title', 'stage', 'company', 'objective',)
+    fields = ('title', 'company', 'objective',)
 
 class EducationTranslationOptions(TranslationOptions):
     fields = ('institution', 'degree', 'record_type',)

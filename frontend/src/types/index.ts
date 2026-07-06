@@ -28,8 +28,7 @@ export interface Project {
 // Обнови этот интерфейс в src/types/index.ts
 export interface Experience {
   id: number;
-  title: string;
-  stage: string; // Должность (например, "Заместитель директора...")
+  title: string; // Должность (например, "Заместитель директора...")
   company: string; // Компания
   date_range: string; // Дата начала (YYYY-MM-DD)
   end_date: string | null; // Дата окончания или null

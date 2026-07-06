@@ -57,10 +57,10 @@ export const ExperienceTimeline = ({
               {/* Должность */}
               <h4
                 className="text-terminal-green text-sm mb-1 uppercase font-bold tracking-tight text-glitch"
-                data-text={log.stage}
+                data-text={log.title}
               >
                 <span className="opacity-50 mr-2">{">"}</span>
-                {log.stage}
+                {log.title}
               </h4>
 
               {/* Компания */}

@@ -32,13 +32,12 @@ class Project(models.Model):
         return self.title
 
 class Experience(models.Model):
-    title = models.CharField(max_length=200)
-    stage = models.CharField(max_length=100)
+    title = models.CharField(max_length=200, help_text="Должность / роль (отображается как заголовок)")
     company = models.CharField(max_length=200)
     date_range = models.DateField()
     end_date = models.DateField(blank=True, null=True)
     objective = models.TextField()
-    details= models.JSONField(default=list, help_text="Список тегов, например ['Django', 'React']")
+    details = models.JSONField(default=list, help_text="Список тегов, например ['Django', 'React']")
     status = models.CharField(max_length=50, default="active", help_text="active, archived, etc.")
 
     def __str__(self):
