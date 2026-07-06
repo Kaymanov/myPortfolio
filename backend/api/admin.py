@@ -1,5 +1,4 @@
 from django.contrib import admin
-from django.db import models
 from martor.widgets import AdminMartorWidget
 from modeltranslation.admin import TranslationAdmin
 from .models import SkillGroup, Skill, Project, Experience, Education, BlogPost, ContactMessage
@@ -40,10 +39,12 @@ class BlogPostAdmin(TranslationAdmin):
     list_filter = ('is_published',)
     readonly_fields = ('created_at', 'updated_at')
 
-    # Markdown-редактор martor для всех TextField (в т.ч. переводов content_*)
-    formfield_overrides = {
-        models.TextField: {'widget': AdminMartorWidget},
-    }
+    def formfield_for_dbfield(self, db_field, request, **kwargs):
+        """Martor-виджет только для полей content (включая content_ru/content_en).
+        Остальные TextField (excerpt и т.п.) используют стандартный textarea."""
+        if db_field.name.startswith('content'):
+            kwargs['widget'] = AdminMartorWidget
+        return super().formfield_for_dbfield(db_field, request, **kwargs)
 
     fieldsets = (
         ("Контент", {
@@ -52,7 +53,7 @@ class BlogPostAdmin(TranslationAdmin):
         ("SEO", {
             'description': (
                 "Если поля пусты, для SEO используются title и excerpt. "
-                "Рекомендации: meta_title ≤ 60 симв., meta_description 50–160 симв."
+                "Рекомендации: meta_title ≤ 60 симв., meta_description 120–160 симв."
             ),
             'fields': ('meta_title', 'meta_description', 'og_image'),
         }),
