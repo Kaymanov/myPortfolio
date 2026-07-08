@@ -12,9 +12,34 @@ class SkillGroupAdmin(admin.ModelAdmin):
 
 @admin.register(Skill)
 class SkillAdmin(admin.ModelAdmin):
-    list_display = ('name', 'group', 'level')
+    list_display = ('name', 'group', 'level', 'icon_name')
     list_filter = ('group',)
     search_fields = ('name',)
+
+    fieldsets = (
+        (None, {
+            'fields': ('group', 'name', 'level', 'icon_name'),
+            'description': (
+                "<strong>Как добавить иконку к скиллу:</strong><br>"
+                "1. <strong>Из библиотеки react-icons</strong> — впиши точное имя "
+                "компонента в поле «Название иконки», например: "
+                "<code>SiDocker</code>, <code>FaLinux</code>, "
+                "<code>AiOutlineWindows</code>, <code>TbBrandUbuntu</code>, "
+                "<code>IoLogoJavascript</code>.<br>"
+                "&nbsp;&nbsp;&nbsp;Каталог всех иконок с поиском: "
+                "<a href='https://react-icons.github.io/react-icons/' "
+                "target='_blank'>react-icons.github.io/react-icons</a> "
+                "(копируй имя прямо из каталога).<br>"
+                "2. <strong>Свой SVG</strong> (если бренда нет в библиотеке, "
+                "например Zabbix) — положи файл в "
+                "<code>frontend/public/icons/skills/</code> "
+                "(например <code>zabbix.svg</code>) и впиши "
+                "<code>custom:zabbix</code> (префикс <code>custom:</code> + имя "
+                "файла без <code>.svg</code>).<br>"
+                "3. Если поле пустое — иконка не показывается."
+            ),
+        }),
+    )
 
 @admin.register(Project)
 class ProjectAdmin(TranslationAdmin):

@@ -70,9 +70,22 @@ interface SkillIconProps {
 export const SkillIcon = ({ name, className = "" }: SkillIconProps) => {
   const [Icon, setIcon] = useState<IconType | null>(null);
 
+  const trimmed = name?.trim();
+
+  // Кастомный SVG: имя вида "custom:zabbix" → файл /icons/skills/zabbix.svg.
+  // Такие иконки кладутся в frontend/public/icons/skills/ и не зависят от
+  // react-icons — удобно для брендов, которых нет в библиотеке (Zabbix и т.п.).
+  const isCustom = trimmed?.toLowerCase().startsWith("custom:");
+  const customFile = isCustom ? trimmed!.slice("custom:".length).trim() : null;
+
   useEffect(() => {
+    // Для кастомных SVG react-icons не нужен — выходим сразу.
+    if (isCustom) {
+      setIcon(null);
+      return;
+    }
+
     let cancelled = false;
-    const trimmed = name?.trim();
 
     if (!trimmed) {
       setIcon(null);
@@ -112,6 +125,22 @@ export const SkillIcon = ({ name, className = "" }: SkillIconProps) => {
       cancelled = true;
     };
   }, [name]);
+
+  // Рендер кастомного SVG из public/icons/skills/.
+  if (isCustom && customFile) {
+    // currentColor не применяется к <img>, поэтому SVG отобразится в своих
+    // цветах. Для монохромного терминального вида делай SVG с fill="currentColor"
+    // и используй маску, либо клади уже зелёный SVG.
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={`/icons/skills/${customFile}.svg`}
+        alt=""
+        aria-hidden="true"
+        className={`inline-block h-[1em] w-[1em] object-contain ${className}`}
+      />
+    );
+  }
 
   if (!Icon) return null;
 

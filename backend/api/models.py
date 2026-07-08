@@ -15,7 +15,16 @@ class Skill(models.Model):
     group = models.ForeignKey(SkillGroup, related_name='skills', on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     level = models.IntegerField(help_text="Процент владения от 0 до 100")
-    icon_name = models.CharField(max_length=50, blank=True, help_text="Название иконки для фронтенда")
+    icon_name = models.CharField(
+        max_length=50,
+        blank=True,
+        help_text=(
+            "Имя иконки из react-icons (например SiDocker, FaLinux, "
+            "AiOutlineWindows, TbBrandUbuntu) — каталог: "
+            "react-icons.github.io/react-icons. "
+            "Для своих SVG: custom:имяфайла (файл в public/icons/skills/)."
+        ),
+    )
 
     def __str__(self):
         return f"{self.name} ({self.level}%)"
