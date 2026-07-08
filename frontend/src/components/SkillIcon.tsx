@@ -1,218 +1,66 @@
 "use client";
 
-import { IconType } from "react-icons";
-import {
-  SiDocker,
-  SiLinux,
-  SiReact,
-  SiPython,
-  SiDjango,
-  SiNginx,
-  SiPostgresql,
-  SiGit,
-  SiTypescript,
-  SiJavascript,
-  SiNextdotjs,
-  SiTailwindcss,
-  SiRedis,
-  SiProxmox,
-  SiAnsible,
-  SiGrafana,
-  SiPrometheus,
-  SiKubernetes,
-  SiVmware,
-  SiCisco,
-  SiWireshark,
-  SiCloudflare,
-  SiGnubash,
-  SiWindows,
-  SiHtml5,
-  SiCss3,
-  SiNodedotjs,
-  SiMongodb,
-  SiApache,
-  SiMysql,
-  SiMariadb,
-  SiUbuntu,
-  SiDebian,
-  SiCentos,
-  SiRedhat,
-  SiElasticsearch,
-  SiKibana,
-  SiVirtualbox,
-  SiWireguard,
-  SiOpenvpn,
-  SiPowershell,
-  SiGitlab,
-  SiGithub,
-  SiJenkins,
-  SiTerraform,
-  SiVault,
-  SiRabbitmq,
-  SiApachekafka,
-  SiMinecraft,
-} from "react-icons/si";
-import {
-  FaServer,
-  FaNetworkWired,
-  FaShieldAlt,
-  FaDatabase,
-  FaCloud,
-  FaTerminal,
-  FaWindows,
-  FaLinux,
-  FaDocker,
-  FaPython,
-} from "react-icons/fa";
-import {
-  AiOutlineWindows,
-  AiOutlineCloud,
-  AiOutlineDatabase,
-  AiOutlineLock,
-  AiOutlineApi,
-} from "react-icons/ai";
+import { useEffect, useState } from "react";
+import type { IconType } from "react-icons";
 
 /**
- * Маппинг строки icon_name (из Django-админки) → React-иконка.
+ * Динамический резолвер иконок react-icons.
  *
- * В админке можно указать:
- * 1. Короткий slug: "docker", "linux", "react", "windows"
- * 2. Полное имя компонента react-icons: "SiDocker", "FaWindows", "AiOutlineWindows"
+ * В админке (поле icon_name) указываешь ПОЛНОЕ имя компонента из react-icons,
+ * например: "AiOutlineWindows", "SiDocker", "FaLinux", "TbBrandUbuntu",
+ * "IoLogoJavascript". Каталог имён: https://react-icons.github.io/react-icons/
  *
- * Если имя не найдено — иконка не рендерится (graceful fallback).
+ * Как это работает:
+ * 1. По префиксу имени (первые 2-3 буквы: Si/Fa/Ai/Tb/…) определяем набор.
+ * 2. Лениво импортируем этот набор (отдельный чанк — не раздуваем бандл).
+ * 3. Находим в наборе иконку по точному имени.
+ *
+ * Если имя не найдено или набор неизвестен — иконка не рендерится
+ * (graceful fallback, ничего не ломается).
  */
-const ICON_MAP: Record<string, IconType> = {
-  // --- Simple Icons (бренды) ---
-  docker: SiDocker,
-  linux: SiLinux,
-  react: SiReact,
-  python: SiPython,
-  django: SiDjango,
-  nginx: SiNginx,
-  postgresql: SiPostgresql,
-  postgres: SiPostgresql,
-  git: SiGit,
-  typescript: SiTypescript,
-  javascript: SiJavascript,
-  nextjs: SiNextdotjs,
-  tailwind: SiTailwindcss,
-  tailwindcss: SiTailwindcss,
-  redis: SiRedis,
-  proxmox: SiProxmox,
-  ansible: SiAnsible,
-  grafana: SiGrafana,
-  prometheus: SiPrometheus,
-  kubernetes: SiKubernetes,
-  vmware: SiVmware,
-  cisco: SiCisco,
-  wireshark: SiWireshark,
-  cloudflare: SiCloudflare,
-  bash: SiGnubash,
-  windows: SiWindows,
-  html: SiHtml5,
-  css: SiCss3,
-  nodejs: SiNodedotjs,
-  mongodb: SiMongodb,
-  apache: SiApache,
-  mysql: SiMysql,
-  mariadb: SiMariadb,
-  ubuntu: SiUbuntu,
-  debian: SiDebian,
-  centos: SiCentos,
-  redhat: SiRedhat,
-  elasticsearch: SiElasticsearch,
-  kibana: SiKibana,
-  virtualbox: SiVirtualbox,
-  wireguard: SiWireguard,
-  openvpn: SiOpenvpn,
-  powershell: SiPowershell,
-  gitlab: SiGitlab,
-  github: SiGithub,
-  jenkins: SiJenkins,
-  terraform: SiTerraform,
-  vault: SiVault,
-  rabbitmq: SiRabbitmq,
-  kafka: SiApachekafka,
 
-  // --- Font Awesome (generic) ---
-  server: FaServer,
-  network: FaNetworkWired,
-  security: FaShieldAlt,
-  database: FaDatabase,
-  cloud: FaCloud,
-  terminal: FaTerminal,
+// Модуль набора: объект с именованными экспортами (иконками) + default.
+type IconModule = Record<string, unknown>;
 
-  // --- Полные имена компонентов (case-sensitive) ---
-  // Simple Icons
-  SiDocker: SiDocker,
-  SiLinux: SiLinux,
-  SiReact: SiReact,
-  SiPython: SiPython,
-  SiDjango: SiDjango,
-  SiNginx: SiNginx,
-  SiPostgresql: SiPostgresql,
-  SiGit: SiGit,
-  SiTypescript: SiTypescript,
-  SiJavascript: SiJavascript,
-  SiNextdotjs: SiNextdotjs,
-  SiTailwindcss: SiTailwindcss,
-  SiRedis: SiRedis,
-  SiProxmox: SiProxmox,
-  SiAnsible: SiAnsible,
-  SiGrafana: SiGrafana,
-  SiPrometheus: SiPrometheus,
-  SiKubernetes: SiKubernetes,
-  SiVmware: SiVmware,
-  SiCisco: SiCisco,
-  SiWireshark: SiWireshark,
-  SiCloudflare: SiCloudflare,
-  SiGnubash: SiGnubash,
-  SiWindows: SiWindows,
-  SiHtml5: SiHtml5,
-  SiCss3: SiCss3,
-  SiNodedotjs: SiNodedotjs,
-  SiMongodb: SiMongodb,
-  SiApache: SiApache,
-  SiMysql: SiMysql,
-  SiMariadb: SiMariadb,
-  SiUbuntu: SiUbuntu,
-  SiDebian: SiDebian,
-  SiCentos: SiCentos,
-  SiRedhat: SiRedhat,
-  SiElasticsearch: SiElasticsearch,
-  SiKibana: SiKibana,
-  SiVirtualbox: SiVirtualbox,
-  SiWireguard: SiWireguard,
-  SiOpenvpn: SiOpenvpn,
-  SiPowershell: SiPowershell,
-  SiGitlab: SiGitlab,
-  SiGithub: SiGithub,
-  SiJenkins: SiJenkins,
-  SiTerraform: SiTerraform,
-  SiVault: SiVault,
-  SiRabbitmq: SiRabbitmq,
-  SiApachekafka: SiApachekafka,
-  SiMinecraft: SiMinecraft,
-
-  // Font Awesome
-  FaServer: FaServer,
-  FaNetworkWired: FaNetworkWired,
-  FaShieldAlt: FaShieldAlt,
-  FaDatabase: FaDatabase,
-  FaCloud: FaCloud,
-  FaTerminal: FaTerminal,
-  FaWindows: FaWindows,
-  FaLinux: FaLinux,
-  FaDocker: FaDocker,
-  FaPython: FaPython,
-
-  // Ant Design Icons
-  AiOutlineWindows: AiOutlineWindows,
-  AiOutlineCloud: AiOutlineCloud,
-  AiOutlineDatabase: AiOutlineDatabase,
-  AiOutlineLock: AiOutlineLock,
-  AiOutlineApi: AiOutlineApi,
+// Загрузчики наборов react-icons по префиксу имени компонента.
+const SET_LOADERS: Record<string, () => Promise<IconModule>> = {
+  Ai: () => import("react-icons/ai"),
+  Bi: () => import("react-icons/bi"),
+  Bs: () => import("react-icons/bs"),
+  Di: () => import("react-icons/di"),
+  Fa6: () => import("react-icons/fa6"),
+  Fa: () => import("react-icons/fa"),
+  Fi: () => import("react-icons/fi"),
+  Gi: () => import("react-icons/gi"),
+  Go: () => import("react-icons/go"),
+  Gr: () => import("react-icons/gr"),
+  Hi2: () => import("react-icons/hi2"),
+  Hi: () => import("react-icons/hi"),
+  Im: () => import("react-icons/im"),
+  Io5: () => import("react-icons/io5"),
+  Io: () => import("react-icons/io5"),
+  Lu: () => import("react-icons/lu"),
+  Md: () => import("react-icons/md"),
+  Pi: () => import("react-icons/pi"),
+  Ri: () => import("react-icons/ri"),
+  Si: () => import("react-icons/si"),
+  Tb: () => import("react-icons/tb"),
+  Tfi: () => import("react-icons/tfi"),
+  Vsc: () => import("react-icons/vsc"),
 };
+
+// Префиксы проверяем от длинных к коротким (Fa6 раньше Fa, Io5 раньше Io, Hi2 раньше Hi).
+const PREFIXES = Object.keys(SET_LOADERS).sort((a, b) => b.length - a.length);
+
+// Кэш уже загруженных наборов, чтобы не импортировать повторно.
+const setCache = new Map<string, IconModule>();
+
+function matchPrefix(name: string): string | null {
+  for (const prefix of PREFIXES) {
+    if (name.startsWith(prefix)) return prefix;
+  }
+  return null;
+}
 
 interface SkillIconProps {
   name?: string;
@@ -220,14 +68,51 @@ interface SkillIconProps {
 }
 
 export const SkillIcon = ({ name, className = "" }: SkillIconProps) => {
-  if (!name) return null;
+  const [Icon, setIcon] = useState<IconType | null>(null);
 
-  // Сначала ищем по точному имени (полные имена react-icons — case-sensitive)
-  let Icon = ICON_MAP[name.trim()];
-  // Если не нашли — ищем по lowercase slug
-  if (!Icon) {
-    Icon = ICON_MAP[name.toLowerCase().trim()];
-  }
+  useEffect(() => {
+    let cancelled = false;
+    const trimmed = name?.trim();
+
+    if (!trimmed) {
+      setIcon(null);
+      return;
+    }
+
+    const prefix = matchPrefix(trimmed);
+    if (!prefix) {
+      setIcon(null);
+      return;
+    }
+
+    const resolve = (mod: IconModule) => {
+      const found = mod[trimmed];
+      setIcon(() => (typeof found === "function" ? (found as IconType) : null));
+    };
+
+    // Набор уже в кэше — берём сразу.
+    const cached = setCache.get(prefix);
+    if (cached) {
+      resolve(cached);
+      return;
+    }
+
+    // Иначе лениво импортируем набор.
+    SET_LOADERS[prefix]()
+      .then((mod) => {
+        if (cancelled) return;
+        setCache.set(prefix, mod);
+        resolve(mod);
+      })
+      .catch(() => {
+        if (!cancelled) setIcon(null);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [name]);
+
   if (!Icon) return null;
 
   return <Icon className={`inline-block ${className}`} aria-hidden="true" />;
