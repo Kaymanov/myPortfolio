@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { SkillIcon } from "./SkillIcon";
 
 interface ProgressBarProps {
   label: string;
   value: number;
+  iconName?: string;
 }
 
 const TOTAL_BARS = 20;
@@ -14,7 +16,7 @@ const FILL_DURATION = 900;
 // Сильный ease-out: быстрый старт, мягкое приземление к итоговому значению.
 const easeOutQuint = (t: number) => 1 - Math.pow(1 - t, 5);
 
-export const ProgressBar = ({ label, value }: ProgressBarProps) => {
+export const ProgressBar = ({ label, value, iconName }: ProgressBarProps) => {
   const ref = useRef<HTMLDivElement>(null);
   const [display, setDisplay] = useState(0);
 
@@ -75,7 +77,11 @@ export const ProgressBar = ({ label, value }: ProgressBarProps) => {
     <div ref={ref} className="font-mono text-xs md:text-sm mb-4 group">
       {/* Верхняя строка: Название и Проценты */}
       <div className="flex justify-between mb-1">
-        <span className="opacity-80 group-hover:text-terminal-green transition-colors">
+        <span className="opacity-80 group-hover:text-terminal-green transition-colors flex items-center gap-1.5">
+          <SkillIcon
+            name={iconName}
+            className="text-terminal-green/60 text-sm"
+          />
           {label.toUpperCase()}
         </span>
         <span className="text-terminal-green tabular-nums">{rounded}%</span>

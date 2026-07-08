@@ -149,6 +149,7 @@ export default async function Home({
                   key={skill.id}
                   label={skill.name}
                   value={skill.level}
+                  iconName={skill.icon_name}
                 />
               ))}
             </div>
