@@ -238,10 +238,10 @@ export const ContactTerminal = ({
               href="mailto:admin@iamroot.pro"
               className="group flex items-center gap-3 w-fit"
             >
-              <span className="text-terminal-green/50 group-hover:text-terminal-green transition-colors">
+              <span className="text-terminal-green/50 group-hover:text-terminal-green transition-colors whitespace-nowrap shrink-0">
                 [ MAIL ]
               </span>
-              <span className="text-white/70 group-hover:text-white transition-colors border-b border-transparent group-hover:border-terminal-green/50 pb-0.5">
+              <span className="text-white/70 group-hover:text-white transition-colors border-b border-transparent group-hover:border-terminal-green/50 pb-0.5 break-all min-w-0">
                 admin@iamroot.pro
               </span>
             </a>
@@ -250,7 +250,7 @@ export const ContactTerminal = ({
               href="tel:+79054811133"
               className="group flex items-center gap-3 w-fit"
             >
-              <span className="text-terminal-green/50 group-hover:text-terminal-green transition-colors">
+              <span className="text-terminal-green/50 group-hover:text-terminal-green transition-colors whitespace-nowrap shrink-0">
                 [ CELL ]
               </span>
               <span className="text-white/70 group-hover:text-white transition-colors border-b border-transparent group-hover:border-terminal-green/50 pb-0.5">
@@ -264,7 +264,7 @@ export const ContactTerminal = ({
               rel="noopener noreferrer"
               className="group flex items-center gap-3 w-fit"
             >
-              <span className="text-terminal-green/50 group-hover:text-terminal-green transition-colors">
+              <span className="text-terminal-green/50 group-hover:text-terminal-green transition-colors whitespace-nowrap shrink-0">
                 [ TG_NODE ]
               </span>
               <span className="text-white/70 group-hover:text-white transition-colors border-b border-transparent group-hover:border-terminal-green/50 pb-0.5">
@@ -393,12 +393,14 @@ export const ContactTerminal = ({
               )}
             </div>
 
-            <div className="mt-2 flex items-center justify-between border-t border-terminal-green/20 pt-4">
-              <div className="text-2xs text-white/55">RSA-4096 ENABLED</div>
+            <div className="mt-2 flex items-center justify-between gap-3 border-t border-terminal-green/20 pt-4">
+              <div className="text-2xs text-white/55 min-w-0">
+                RSA-4096 ENABLED
+              </div>
               <button
                 type="submit"
                 disabled={transmitting}
-                className="border border-terminal-green text-terminal-green hover:bg-terminal-green hover:text-terminal-bg px-6 py-2 uppercase font-bold text-sm transition-[background-color,color,opacity] duration-200 ease-out disabled:opacity-50 disabled:cursor-not-allowed group relative overflow-hidden"
+                className="border border-terminal-green text-terminal-green hover:bg-terminal-green hover:text-terminal-bg px-6 py-2 uppercase font-bold text-sm transition-[background-color,color,opacity] duration-200 ease-out disabled:opacity-50 disabled:cursor-not-allowed group relative overflow-hidden whitespace-nowrap shrink-0"
               >
                 {status === "IDLE" && <span>[ TRANSMIT ]</span>}
                 {status === "TRANSMITTING" && (
