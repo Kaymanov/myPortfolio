@@ -232,28 +232,30 @@ export const ContactTerminal = ({
             </div>
           </div>
 
-          {/* Контактные линки */}
-          <div className="flex flex-col gap-4">
+          {/* Контактные линки. Метка + значение держатся в одну строку
+              (whitespace-nowrap); на узких экранах чуть уменьшаем шрифт,
+              чтобы длинные значения (email/телефон) помещались без переноса. */}
+          <div className="flex flex-col gap-4 text-xs sm:text-sm">
             <a
               href="mailto:admin@iamroot.pro"
-              className="group flex items-center gap-3 w-fit"
+              className="group flex items-center gap-2 sm:gap-3 w-fit max-w-full"
             >
               <span className="text-terminal-green/50 group-hover:text-terminal-green transition-colors whitespace-nowrap shrink-0">
                 [ MAIL ]
               </span>
-              <span className="text-white/70 group-hover:text-white transition-colors border-b border-transparent group-hover:border-terminal-green/50 pb-0.5 break-all min-w-0">
+              <span className="text-white/70 group-hover:text-white transition-colors border-b border-transparent group-hover:border-terminal-green/50 pb-0.5 whitespace-nowrap">
                 admin@iamroot.pro
               </span>
             </a>
 
             <a
               href="tel:+79054811133"
-              className="group flex items-center gap-3 w-fit"
+              className="group flex items-center gap-2 sm:gap-3 w-fit max-w-full"
             >
               <span className="text-terminal-green/50 group-hover:text-terminal-green transition-colors whitespace-nowrap shrink-0">
                 [ CELL ]
               </span>
-              <span className="text-white/70 group-hover:text-white transition-colors border-b border-transparent group-hover:border-terminal-green/50 pb-0.5">
+              <span className="text-white/70 group-hover:text-white transition-colors border-b border-transparent group-hover:border-terminal-green/50 pb-0.5 whitespace-nowrap">
                 +7 (905) 481-11-33
               </span>
             </a>
@@ -262,12 +264,12 @@ export const ContactTerminal = ({
               href="https://t.me/Kaymanov_Andrey"
               target="_blank"
               rel="noopener noreferrer"
-              className="group flex items-center gap-3 w-fit"
+              className="group flex items-center gap-2 sm:gap-3 w-fit max-w-full"
             >
               <span className="text-terminal-green/50 group-hover:text-terminal-green transition-colors whitespace-nowrap shrink-0">
                 [ TG_NODE ]
               </span>
-              <span className="text-white/70 group-hover:text-white transition-colors border-b border-transparent group-hover:border-terminal-green/50 pb-0.5">
+              <span className="text-white/70 group-hover:text-white transition-colors border-b border-transparent group-hover:border-terminal-green/50 pb-0.5 whitespace-nowrap">
                 @Kaymanov_Andrey
               </span>
             </a>
@@ -276,7 +278,7 @@ export const ContactTerminal = ({
 
         {/* ПРАВАЯ КОЛОНКА: ФОРМА */}
         <div className="lg:border-l lg:border-terminal-green/20 lg:pl-10">
-          <div className="text-2xs text-white/55 mb-6 flex justify-between items-end">
+          <div className="text-2xs text-white/55 mb-6 flex flex-col gap-1 sm:flex-row sm:justify-between sm:items-end sm:gap-2">
             <span>DIRECT_PAYLOAD_UPLOAD</span>
             <span className="text-terminal-green/60 animate-pulse">
               PORT 443: LISTENING
